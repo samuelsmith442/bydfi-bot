@@ -1,4 +1,4 @@
-﻿import 'dotenv/config';
+import 'dotenv/config';
 import { fetchTickers } from './api/rest.js';
 import { streamTickers } from './api/ws.js';
 import { generateCombinedSignals } from './strategies/combined.js';
@@ -36,21 +36,12 @@ async function runBot() {
       
       console.log(`[DEBUG] Total early signals: ${earlySignals.length}`);
       console.log(`[DEBUG] High confidence early signals: ${highConfidenceEarly.length}`);
-      if (earlySignals.length > 0 && highConfidenceEarly.length === 0) {
-        console.log(`[DEBUG] Sample early signal confidence levels:`, earlySignals.slice(0, 3).map(s => ({ symbol: s.symbol, confidence: s.confidence, score: s.score })));
-      }
       
-      const maxEarly = 2; // Show top 2 early signals per type
-      const maxConfirmed = 3; // Show top 3 confirmed per type
+      const maxEarly = 2;
+      const maxConfirmed = 3;
       
       const earlyLongs = highConfidenceEarly.filter(s => s.type === 'EARLY_LONG').slice(0, maxEarly);
       const earlyShorts = highConfidenceEarly.filter(s => s.type === 'EARLY_SHORT').slice(0, maxEarly);
-      
-      console.log(`[DEBUG] Early longs after filter: ${earlyLongs.length}`);
-      console.log(`[DEBUG] Early shorts after filter: ${earlyShorts.length}`);
-      if (earlyLongs.length > 0 && earlyLongs[0]) {
-        console.log(`[DEBUG] First early long:`, { symbol: earlyLongs[0].symbol, type: earlyLongs[0].type, confidence: earlyLongs[0].confidence });
-      }
       
       // Confirmed Signals (moves already in progress)
       const signals = generateCombinedSignals(tickers);
@@ -119,9 +110,6 @@ async function runBot() {
       console.error('[REST] Error fetching tickers:', error);
     }
   };
-  
-  // Start dashboard server after defining the fetch function
-  startDashboardServer();
   
   // Fetch immediately on startup
   console.log('[BOT] Running initial ticker fetch...');

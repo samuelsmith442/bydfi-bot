@@ -1,4 +1,4 @@
-﻿import 'dotenv/config';
+import 'dotenv/config';
 import { fetchTickers } from './api/rest.js';
 import { streamTickers } from './api/ws.js';
 import { generateCombinedSignals } from './strategies/combined.js';
@@ -23,8 +23,10 @@ async function runBot() {
   // Start dashboard server
   startDashboardServer();
   
-  // Function to fetch and process tickers
-  const fetchAndProcessTickers = async () => {
+  let lastAlertTime = 0;
+  
+  // REST: Fetch tickers based on configured interval
+  setInterval(async () => {
     try {
       console.log('[REST] Fetching tickers...');
       const tickers = await fetchTickers();
