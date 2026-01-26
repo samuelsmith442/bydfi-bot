@@ -54,16 +54,16 @@ export function detectEarlyEntries(tickers: Ticker[]): EarlySignal[] {
         confidence = confidence === 'high' ? 'high' : 'medium';
       }
       
-      // 3. Breakout Pattern (5-8% with strong volume)
+      // 3. Breakout Pattern (5-9% with strong volume)
       // Early stage of bigger move
-      if (priceChange >= 5 && priceChange < 8 && volumeRatio > 2) {
+      if (priceChange >= 5 && priceChange < 10 && volumeRatio > 2) {
         triggers.push(`Early breakout +${priceChange.toFixed(2)}% with strong volume`);
         score += 5;
         confidence = 'high';
       }
       
       // 4. Extreme Volume (potential whale accumulation)
-      if (volumeRatio > 4 && priceChange >= 1) {
+      if (volumeRatio > 4 && priceChange >= 1 && priceChange < 10) {
         triggers.push(`Extreme volume ${volumeRatio.toFixed(1)}x - possible accumulation`);
         score += 3;
         confidence = 'high';
@@ -103,15 +103,15 @@ export function detectEarlyEntries(tickers: Ticker[]): EarlySignal[] {
         confidence = confidence === 'high' ? 'high' : 'medium';
       }
       
-      // 3. Early Breakdown (-5% to -8%)
-      if (absChange >= 5 && absChange < 8 && volumeRatio > 2) {
+      // 3. Early Breakdown (-5% to -9%)
+      if (absChange >= 5 && absChange < 10 && volumeRatio > 2) {
         triggers.push(`Early breakdown -${absChange.toFixed(2)}% with strong volume`);
         score -= 5;
         confidence = 'high';
       }
       
       // 4. Extreme Volume (potential whale distribution)
-      if (volumeRatio > 4 && absChange >= 1) {
+      if (volumeRatio > 4 && absChange >= 1 && absChange < 10) {
         triggers.push(`Extreme volume ${volumeRatio.toFixed(1)}x - possible distribution`);
         score -= 3;
         confidence = 'high';

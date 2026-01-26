@@ -40,7 +40,7 @@ async function runBot() {
         console.log(`[DEBUG] Sample early signal confidence levels:`, earlySignals.slice(0, 3).map(s => ({ symbol: s.symbol, confidence: s.confidence, score: s.score })));
       }
       
-      const maxEarly = 2; // Show top 2 early signals per type
+      const maxEarly = 5; // Show top 5 early signals per type (10 total)
       const maxConfirmed = 3; // Show top 3 confirmed per type
       
       const earlyLongs = highConfidenceEarly.filter(s => s.type === 'EARLY_LONG').slice(0, maxEarly);
@@ -58,7 +58,8 @@ async function runBot() {
       
       // Update dashboard with latest data
       const allConfirmedSignals = signals.filter(s => Math.abs(s.score) >= 3).slice(0, 10);
-      updateDashboardData(highConfidenceEarly, allConfirmedSignals, config.style);
+      const allEarlySignals = [...earlyLongs, ...earlyShorts]; // Combined 10 early signals (5 long + 5 short)
+      updateDashboardData(allEarlySignals, allConfirmedSignals, config.style);
       
       // Separate long and short signals based on config
       const longSignals = signals.filter(s => s.score > 0).slice(0, maxConfirmed);
