@@ -7,6 +7,8 @@ import { sendAlert } from './services/alerts.js';
 import { getConfig } from './config/trading-config.js';
 import { updateDashboardData } from './services/dashboard.js';
 import { startDashboardServer } from './api/dashboard-server.js';
+import { shouldRunBot, getAdaptiveThresholds, logMarketActivity } from './utils/market-activity.js';
+import { logEarlySignals, logConfirmedSignals, printSignalReport } from './services/signal-history.js';
 import type { Ticker } from './models/types.js';
 
 // CONFIGURE YOUR TRADING STYLE HERE:
@@ -29,6 +31,19 @@ async function runBot() {
       console.log('[REST] Fetching tickers...');
       const tickers = await fetchTickers();
       console.log(`[REST] Received ${tickers.length} tickers`);
+      
+      // Check if market is active enough for trading
+      const thresholds = getAdaptiveThresholds();
+      const { shouldRun, reason, activity } = shouldRunBot(tickers, thresholds);
+      
+      logMarketActivity(activity, shouldRun, reason);
+      
+      if (!shouldRun) {
+        console.log(`[BOT] Skipping signal generation - ${reason}`);
+        return; // Skip processing but keep checking
+      }
+      
+      console.log(`[BOT] Market active - generating signals...`);
       
       // Early Entry Signals (catch moves before +10%)
       const earlySignals = detectEarlyEntries(tickers);
@@ -60,6 +75,10 @@ async function runBot() {
       const allConfirmedSignals = signals.filter(s => Math.abs(s.score) >= 3).slice(0, 10);
       const allEarlySignals = [...earlyLongs, ...earlyShorts]; // Combined 10 early signals (5 long + 5 short)
       updateDashboardData(allEarlySignals, allConfirmedSignals, config.style);
+      
+      // Log signals to history for tracking
+      logEarlySignals(allEarlySignals);
+      logConfirmedSignals(allConfirmedSignals);
       
       // Separate long and short signals based on config
       const longSignals = signals.filter(s => s.score > 0).slice(0, maxConfirmed);
