@@ -1,6 +1,6 @@
 # Dependencies
 node_modules/
-package-lock.json
+# package-lock.json - DO NOT IGNORE, Railway needs this
 
 # Environment variables
 .env
