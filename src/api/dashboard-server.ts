@@ -10,6 +10,9 @@ const __dirname = path.dirname(__filename);
 const PORT = process.env.PORT || 3000;
 
 export function startDashboardServer(): void {
+  console.log(`[DASHBOARD] Attempting to start server on port ${PORT}`);
+  console.log(`[DASHBOARD] PORT env variable: ${process.env.PORT || 'not set (using default 3000)'}`);
+  
   const server = http.createServer((req, res) => {
     // Enable CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -19,6 +22,13 @@ export function startDashboardServer(): void {
     if (req.method === 'OPTIONS') {
       res.writeHead(200);
       res.end();
+      return;
+    }
+
+    // Health check endpoint for Railway
+    if (req.url === '/health' && req.method === 'GET') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ status: 'ok', timestamp: new Date().toISOString() }));
       return;
     }
 
