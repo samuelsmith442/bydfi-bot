@@ -150,10 +150,17 @@ async function runBot() {
   // Then set up interval for subsequent fetches
   setInterval(fetchAndProcessTickers, config.pollingInterval);
 
+  // Keep the process alive
+  console.log('[BOT] Bot is running. Press Ctrl+C to stop.');
+  
   // WebSocket: Real-time updates (disabled for now due to 403 error)
   // streamTickers((ticker: any) => {
   //   console.log(`[WS] ${ticker.symbol}: ${ticker.lastPrice}`);
   // });
 }
 
-runBot();
+runBot().catch((error) => {
+  console.error('[BOT] Fatal error during startup:', error);
+  console.error('[BOT] Stack trace:', error.stack);
+  process.exit(1);
+});
