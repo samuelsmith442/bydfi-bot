@@ -1,7 +1,7 @@
 // Dashboard state
 let earlySignals = [];
 let confirmedSignals = [];
-const API_URL = 'http://localhost:3000/api/signals';
+const API_URL = '/api/signals';
 
 /**
  * Format price change with appropriate color class
