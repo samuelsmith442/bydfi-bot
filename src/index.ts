@@ -13,7 +13,7 @@ import type { Ticker } from './models/types.js';
 
 // CONFIGURE YOUR TRADING STYLE HERE:
 // Options: 'scalp' (5min), 'day' (1hr), 'swing' (4hr)
-const TRADING_STYLE = 'day';
+const TRADING_STYLE = 'scalp';
 const config = getConfig(TRADING_STYLE);
 
 async function runBot() {
