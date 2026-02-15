@@ -106,7 +106,7 @@ export function startDashboardServer(): void {
     }
   });
 
-  server.listen(PORT, '0.0.0.0', () => {
+  server.listen(Number(PORT), '0.0.0.0', () => {
     console.log(`[DASHBOARD] ✅ Server running on port ${PORT}`);
     console.log(`[DASHBOARD] Ready to accept connections`);
   });
