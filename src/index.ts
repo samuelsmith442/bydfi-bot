@@ -17,13 +17,14 @@ const TRADING_STYLE = 'scalp';
 const config = getConfig(TRADING_STYLE);
 
 async function runBot() {
+  // Start dashboard server FIRST so Railway can detect the app is alive
+  console.log('[BOT] Starting dashboard server for Railway health checks...');
+  startDashboardServer();
+  
   console.log(`[BOT] Starting BYDFi trading bot in ${config.style.toUpperCase()} mode...`);
   console.log(`[BOT] Polling interval: ${config.pollingInterval / 60000} minutes`);
   console.log(`[BOT] Max alerts per cycle: ${config.maxAlertsPerCycle}`);
   console.log('='.repeat(60) + '\n');
-  
-  // Start dashboard server
-  startDashboardServer();
   
   // Function to fetch and process tickers
   const fetchAndProcessTickers = async () => {
@@ -139,9 +140,6 @@ async function runBot() {
       console.error('[REST] Error fetching tickers:', error);
     }
   };
-  
-  // Start dashboard server after defining the fetch function
-  startDashboardServer();
   
   // Fetch immediately on startup
   console.log('[BOT] Running initial ticker fetch...');
