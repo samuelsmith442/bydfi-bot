@@ -96,8 +96,8 @@ export function startDashboardServer(): void {
     }
   });
 
-  server.listen(PORT, () => {
-    console.log(`[DASHBOARD] ✅ Server running at http://localhost:${PORT}`);
-    console.log(`[DASHBOARD] Open http://localhost:${PORT} in your browser`);
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`[DASHBOARD] ✅ Server running on port ${PORT}`);
+    console.log(`[DASHBOARD] Ready to accept connections`);
   });
 }
