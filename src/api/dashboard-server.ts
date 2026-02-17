@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { getDashboardData } from '../services/dashboard.js';
+import { getPaperTradingData } from '../services/paper-trading-dashboard.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -41,6 +42,20 @@ export function startDashboardServer(): void {
         res.end(JSON.stringify(data));
       } catch (error) {
         console.error('[DASHBOARD] Error in /api/signals:', error);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Internal server error' }));
+      }
+      return;
+    }
+
+    // API endpoint for paper trading data
+    if (req.url === '/api/paper-trading' && req.method === 'GET') {
+      try {
+        const data = getPaperTradingData();
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(data || { message: 'No paper trading data available' }));
+      } catch (error) {
+        console.error('[DASHBOARD] Error in /api/paper-trading:', error);
         res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Internal server error' }));
       }

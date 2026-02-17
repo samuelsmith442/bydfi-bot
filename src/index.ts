@@ -9,12 +9,26 @@ import { updateDashboardData } from './services/dashboard.js';
 import { startDashboardServer } from './api/dashboard-server.js';
 import { shouldRunBot, getAdaptiveThresholds, logMarketActivity } from './utils/market-activity.js';
 import { logEarlySignals, logConfirmedSignals, printSignalReport } from './services/signal-history.js';
+import { PaperTradingManager } from './services/paper-trading.js';
+import { PaperTradingStrategy } from './services/paper-trading-strategy.js';
+import { updatePaperTradingDashboard } from './services/paper-trading-dashboard.js';
 import type { Ticker } from './models/types.js';
 
 // CONFIGURE YOUR TRADING STYLE HERE:
 // Options: 'scalp' (5min), 'day' (1hr), 'swing' (4hr)
 const TRADING_STYLE = 'scalp';
 const config = getConfig(TRADING_STYLE);
+
+// PAPER TRADING CONFIGURATION
+const PAPER_TRADING_ENABLED = true;
+const paperTradingManager = new PaperTradingManager({
+  initialBalance: 1000,
+  leverage: 3,
+  riskPercentage: 4,
+  stopLossPercentage: 5,
+  maxOpenPositions: 5,
+});
+const paperStrategy = new PaperTradingStrategy(paperTradingManager, 4, PAPER_TRADING_ENABLED);
 
 async function runBot() {
   // Start dashboard server FIRST so Railway can detect the app is alive
@@ -81,6 +95,11 @@ async function runBot() {
       logEarlySignals(allEarlySignals);
       logConfirmedSignals(allConfirmedSignals);
       
+      // Paper Trading: Process confirmed signals
+      if (PAPER_TRADING_ENABLED) {
+        paperStrategy.processConfirmedSignals(allConfirmedSignals, tickers);
+      }
+      
       // Separate long and short signals based on config
       const longSignals = signals.filter(s => s.score > 0).slice(0, maxConfirmed);
       const shortSignals = signals.filter(s => s.score < 0).slice(0, maxConfirmed);
@@ -136,6 +155,13 @@ async function runBot() {
       
       console.log('='.repeat(60) + '\n');
       console.log(`[DASHBOARD] Data updated - ${highConfidenceEarly.length} early signals, ${allConfirmedSignals.length} confirmed signals\n`);
+      
+      // Print paper trading account summary and update dashboard
+      if (PAPER_TRADING_ENABLED) {
+        const paperAccount = paperTradingManager.getAccount();
+        updatePaperTradingDashboard(paperAccount);
+        paperTradingManager.printAccountSummary();
+      }
     } catch (error) {
       console.error('[REST] Error fetching tickers:', error);
     }
