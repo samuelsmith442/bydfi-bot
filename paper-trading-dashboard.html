@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paper Trading Dashboard - BYDFi Bot</title>
+    <link rel="stylesheet" href="/public/styles.css">
+    <style>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #f1f5f9;
+        }
+        
+        .stat-value.positive {
+            color: #10b981;
+        }
+        
+        .stat-value.negative {
+            color: #ef4444;
+        }
+        
+        .position-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .position-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        
+        .position-symbol {
+            font-size: 1.125rem;
+            font-weight: bold;
+            color: #f1f5f9;
+        }
+        
+        .position-side {
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .position-side.long {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .position-side.short {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .position-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+        
+        .position-pnl {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(148, 163, 184, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .trade-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .trade-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .trade-result {
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .trade-result.win {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .trade-result.loss {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .nav-links {
+            margin-bottom: 1rem;
+        }
+        
+        .nav-links a {
+            color: #60a5fa;
+            text-decoration: none;
+            margin-right: 1rem;
+        }
+        
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💰 Paper Trading Dashboard</h1>
+            <div class="nav-links">
+                <a href="/">← Back to Signals</a>
+            </div>
+        </header>
+
+        <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Balance</div>
+                <div class="stat-value" id="balance">$0.00</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Equity</div>
+                <div class="stat-value" id="equity">$0.00</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total P&L</div>
+                <div class="stat-value" id="total-pnl">$0.00</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Win Rate</div>
+                <div class="stat-value" id="win-rate">0%</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Trades</div>
+                <div class="stat-value" id="total-trades">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Profit Factor</div>
+                <div class="stat-value" id="profit-factor">0.00</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">📊 Open Positions</div>
+            <div id="open-positions">
+                <div class="no-data">No open positions</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">📈 Recent Trades (Last 10)</div>
+            <div id="recent-trades">
+                <div class="no-data">No trades yet</div>
+            </div>
+        </div>
+
+        <div class="last-update">
+            Dashboard auto-refreshes every 5 seconds.
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/api/paper-trading';
+
+        function formatCurrency(value) {
+            return '$' + value.toFixed(2);
+        }
+
+        function formatPercent(value) {
+            return value.toFixed(2) + '%';
+        }
+
+        function formatDuration(ms) {
+            const minutes = Math.floor(ms / (1000 * 60));
+            if (minutes < 60) return minutes + 'min';
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            return hours + 'h ' + mins + 'min';
+        }
+
+        function renderStats(data) {
+            document.getElementById('balance').textContent = formatCurrency(data.balance);
+            document.getElementById('equity').textContent = formatCurrency(data.equity);
+            
+            const pnlElement = document.getElementById('total-pnl');
+            pnlElement.textContent = formatCurrency(data.totalPnL) + ' (' + formatPercent(data.totalPnLPercent) + ')';
+            pnlElement.className = 'stat-value ' + (data.totalPnL >= 0 ? 'positive' : 'negative');
+            
+            document.getElementById('win-rate').textContent = formatPercent(data.winRate);
+            document.getElementById('total-trades').textContent = data.totalTrades;
+            document.getElementById('profit-factor').textContent = data.profitFactor.toFixed(2);
+        }
+
+        function renderOpenPositions(positions) {
+            const container = document.getElementById('open-positions');
+            
+            if (positions.length === 0) {
+                container.innerHTML = '<div class="no-data">No open positions</div>';
+                return;
+            }
+
+            container.innerHTML = positions.map(pos => {
+                const pnlClass = pos.unrealizedPnL >= 0 ? 'positive' : 'negative';
+                const sideClass = pos.side.toLowerCase();
+                
+                return `
+                    <div class="position-card">
+                        <div class="position-header">
+                            <span class="position-symbol">${pos.symbol}</span>
+                            <span class="position-side ${sideClass}">${pos.side}</span>
+                        </div>
+                        <div class="position-details">
+                            <div>Entry: ${formatCurrency(pos.entryPrice)}</div>
+                            <div>Current: ${formatCurrency(pos.currentPrice)}</div>
+                            <div>Size: ${formatCurrency(pos.positionSize)}</div>
+                            <div>Leverage: ${pos.leverage}x</div>
+                            <div>Stop Loss: ${formatCurrency(pos.stopLoss)}</div>
+                            <div>Quantity: ${pos.quantity.toFixed(4)}</div>
+                        </div>
+                        <div class="position-pnl">
+                            <span>Unrealized P&L:</span>
+                            <span class="${pnlClass}" style="font-weight: bold; font-size: 1.125rem;">
+                                ${formatCurrency(pos.unrealizedPnL)} (${formatPercent(pos.unrealizedPnLPercent)})
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderRecentTrades(trades) {
+            const container = document.getElementById('recent-trades');
+            
+            if (trades.length === 0) {
+                container.innerHTML = '<div class="no-data">No trades yet</div>';
+                return;
+            }
+
+            const recentTrades = trades.slice(-10).reverse();
+            
+            container.innerHTML = recentTrades.map(trade => {
+                const resultClass = trade.realizedPnL >= 0 ? 'win' : 'loss';
+                const resultText = trade.realizedPnL >= 0 ? '✅ WIN' : '❌ LOSS';
+                const sideClass = trade.side.toLowerCase();
+                
+                return `
+                    <div class="trade-card">
+                        <div class="trade-header">
+                            <div>
+                                <span class="position-symbol">${trade.symbol}</span>
+                                <span class="position-side ${sideClass}" style="margin-left: 0.5rem;">${trade.side}</span>
+                            </div>
+                            <span class="trade-result ${resultClass}">${resultText}</span>
+                        </div>
+                        <div class="position-details">
+                            <div>Entry: ${formatCurrency(trade.entryPrice)}</div>
+                            <div>Exit: ${formatCurrency(trade.exitPrice)}</div>
+                            <div>Size: ${formatCurrency(trade.positionSize)}</div>
+                            <div>Duration: ${formatDuration(trade.duration)}</div>
+                            <div>Reason: ${trade.closeReason}</div>
+                            <div style="font-weight: bold; color: ${trade.realizedPnL >= 0 ? '#10b981' : '#ef4444'}">
+                                P&L: ${formatCurrency(trade.realizedPnL)} (${formatPercent(trade.realizedPnLPercent)})
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function fetchPaperTradingData() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const data = await response.json();
+                
+                if (data.message) {
+                    console.log(data.message);
+                    return;
+                }
+                
+                renderStats(data);
+                renderOpenPositions(data.openPositions || []);
+                renderRecentTrades(data.closedTrades || []);
+                
+            } catch (error) {
+                console.error('Error fetching paper trading data:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchPaperTradingData();
+            setInterval(fetchPaperTradingData, 5000);
+        });
+    </script>
+</body>
+</html>

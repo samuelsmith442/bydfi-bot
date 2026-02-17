@@ -78,6 +78,22 @@ export function startDashboardServer(): void {
       return;
     }
 
+    // Serve paper trading dashboard HTML
+    if (req.url === '/paper-trading' || req.url === '/paper-trading.html') {
+      const dashboardPath = path.join(__dirname, '../../paper-trading-dashboard.html');
+      fs.readFile(dashboardPath, 'utf8', (err, data) => {
+        if (err) {
+          console.error('[DASHBOARD] Error reading paper-trading-dashboard.html:', err);
+          res.writeHead(404, { 'Content-Type': 'text/plain' });
+          res.end('Paper trading dashboard not found');
+          return;
+        }
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(data);
+      });
+      return;
+    }
+
     // Serve static files from public folder
     if (req.url?.startsWith('/public/')) {
       const filePath = path.join(__dirname, '../..', req.url);
