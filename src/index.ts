@@ -28,7 +28,7 @@ const paperTradingManager = new PaperTradingManager({
   stopLossPercentage: 5,
   maxOpenPositions: 5,
 });
-const paperStrategy = new PaperTradingStrategy(paperTradingManager, 4, PAPER_TRADING_ENABLED);
+const paperStrategy = new PaperTradingStrategy(paperTradingManager, 6, PAPER_TRADING_ENABLED);
 
 async function runBot() {
   // Start dashboard server FIRST so Railway can detect the app is alive

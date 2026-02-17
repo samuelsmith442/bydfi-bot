@@ -1,15 +1,16 @@
 import { PaperTradingManager } from './paper-trading.js';
 import type { TradingSignal } from '../strategies/combined.js';
 import type { Ticker } from '../models/types.js';
+import { enhanceSignals, filterTradableSignals, getBestSignals } from '../utils/enhanced-scoring.js';
 
 export class PaperTradingStrategy {
   private manager: PaperTradingManager;
-  private minConfirmedScore: number;
+  private minEnhancedScore: number;
   private autoTradeEnabled: boolean;
 
-  constructor(manager: PaperTradingManager, minConfirmedScore: number = 4, autoTradeEnabled: boolean = true) {
+  constructor(manager: PaperTradingManager, minEnhancedScore: number = 6, autoTradeEnabled: boolean = true) {
     this.manager = manager;
-    this.minConfirmedScore = minConfirmedScore;
+    this.minEnhancedScore = minEnhancedScore;
     this.autoTradeEnabled = autoTradeEnabled;
   }
 
@@ -23,29 +24,34 @@ export class PaperTradingStrategy {
 
     this.manager.updatePositions(priceMap);
 
-    for (const signal of signals) {
-      if (Math.abs(signal.score) < this.minConfirmedScore) continue;
+    const enhancedSignals = enhanceSignals(signals, tickers);
+    const tradableSignals = filterTradableSignals(enhancedSignals, this.minEnhancedScore);
+    const bestSignals = getBestSignals(tradableSignals, 3);
 
+    console.log(`[PAPER STRATEGY] 📊 Enhanced Analysis: ${enhancedSignals.length} signals analyzed`);
+    console.log(`[PAPER STRATEGY]    Tradable: ${tradableSignals.length} | Best: ${bestSignals.length}`);
+
+    for (const signal of bestSignals) {
       const currentPrice = priceMap.get(signal.symbol);
       if (!currentPrice) continue;
 
       const side = signal.score > 0 ? 'LONG' : 'SHORT';
-      
       const priceChangePercent = parseFloat(signal.data.priceChange);
       
+      console.log(`[PAPER STRATEGY] ${side === 'SHORT' ? '📉' : '📈'} ${signal.tradingRecommendation}: ${signal.symbol}`);
+      console.log(`[PAPER STRATEGY]    Price: $${currentPrice.toFixed(4)} (${priceChangePercent > 0 ? '+' : ''}${priceChangePercent.toFixed(2)}%)`);
+      console.log(`[PAPER STRATEGY]    Base Score: ${signal.score} → Enhanced: ${signal.enhancedScore}`);
+      console.log(`[PAPER STRATEGY]    Volume: ${signal.volumeTrend} | Momentum: ${signal.priceMomentum} | Age: ${signal.pumpAge}`);
+      console.log(`[PAPER STRATEGY]    Confidence: ${signal.confidenceLevel}% | Exhaustion: ${signal.isExhaustion ? 'YES' : 'NO'}`);
+      
       if (side === 'SHORT' && priceChangePercent > 0) {
-        console.log(`[PAPER STRATEGY] 📉 Bearish signal detected: ${signal.symbol}`);
-        console.log(`[PAPER STRATEGY]    Price: $${currentPrice.toFixed(4)} (+${priceChangePercent.toFixed(2)}%)`);
-        console.log(`[PAPER STRATEGY]    Score: ${signal.score}`);
-        console.log(`[PAPER STRATEGY]    Reasoning: Price exhaustion expected after ${priceChangePercent.toFixed(2)}% pump`);
-        
+        console.log(`[PAPER STRATEGY]    ✅ Opening SHORT - Exhaustion play on +${priceChangePercent.toFixed(2)}% pump`);
         this.manager.openPosition(signal.symbol, 'SHORT', currentPrice);
       } else if (side === 'LONG' && priceChangePercent < 0) {
-        console.log(`[PAPER STRATEGY] 📈 Bullish signal detected: ${signal.symbol}`);
-        console.log(`[PAPER STRATEGY]    Price: $${currentPrice.toFixed(4)} (${priceChangePercent.toFixed(2)}%)`);
-        console.log(`[PAPER STRATEGY]    Score: ${signal.score}`);
-        
+        console.log(`[PAPER STRATEGY]    ✅ Opening LONG - Bounce play on ${priceChangePercent.toFixed(2)}% dip`);
         this.manager.openPosition(signal.symbol, 'LONG', currentPrice);
+      } else {
+        console.log(`[PAPER STRATEGY]    ⏸️  Skipped - Price direction doesn't match strategy`);
       }
     }
   }
