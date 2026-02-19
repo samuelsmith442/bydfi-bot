@@ -25,6 +25,8 @@ export interface Position {
   status: 'OPEN' | 'CLOSED' | 'STOPPED';
   closeReason?: 'STOP_LOSS' | 'TAKE_PROFIT' | 'MANUAL';
   realizedPnL?: number;
+  source: 'BOT' | 'MANUAL';
+  notes?: string;
 }
 
 export interface Trade {
@@ -42,6 +44,8 @@ export interface Trade {
   closedAt: Date;
   closeReason: 'STOP_LOSS' | 'TAKE_PROFIT' | 'MANUAL';
   duration: number;
+  source: 'BOT' | 'MANUAL';
+  notes?: string;
 }
 
 export interface PaperAccount {

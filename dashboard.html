@@ -51,11 +51,87 @@
             </div>
         </div>
 
+        <!-- Quick manual trade entry -->
+        <div class="card" style="margin-top:1.5rem;">
+            <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+                <span>✏️ Quick Manual Trade</span>
+                <a href="/paper-trading" style="font-size:0.8rem;color:#60a5fa;text-decoration:none;font-weight:400;">View all trades →</a>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.6rem;margin-bottom:0.75rem;">
+                <input id="q-symbol"  type="text"   placeholder="Symbol e.g. BTC-USDT"
+                    style="background:rgba(15,23,42,0.8);border:1px solid rgba(148,163,184,0.2);border-radius:6px;color:#f1f5f9;padding:0.45rem 0.7rem;font-size:0.85rem;width:100%;box-sizing:border-box;" />
+                <select id="q-side"
+                    style="background:rgba(15,23,42,0.8);border:1px solid rgba(148,163,184,0.2);border-radius:6px;color:#f1f5f9;padding:0.45rem 0.7rem;font-size:0.85rem;width:100%;box-sizing:border-box;">
+                    <option value="SHORT">SHORT (Bear)</option>
+                    <option value="LONG">LONG (Bull)</option>
+                </select>
+                <input id="q-entry" type="number" step="any" placeholder="Entry Price"
+                    style="background:rgba(15,23,42,0.8);border:1px solid rgba(148,163,184,0.2);border-radius:6px;color:#f1f5f9;padding:0.45rem 0.7rem;font-size:0.85rem;width:100%;box-sizing:border-box;" />
+                <input id="q-sl"    type="number" step="any" placeholder="Stop Loss"
+                    style="background:rgba(15,23,42,0.8);border:1px solid rgba(148,163,184,0.2);border-radius:6px;color:#f1f5f9;padding:0.45rem 0.7rem;font-size:0.85rem;width:100%;box-sizing:border-box;" />
+                <input id="q-tp"    type="number" step="any" placeholder="Take Profit (opt)"
+                    style="background:rgba(15,23,42,0.8);border:1px solid rgba(148,163,184,0.2);border-radius:6px;color:#f1f5f9;padding:0.45rem 0.7rem;font-size:0.85rem;width:100%;box-sizing:border-box;" />
+                <input id="q-notes" type="text"   placeholder="Notes (opt)"
+                    style="background:rgba(15,23,42,0.8);border:1px solid rgba(148,163,184,0.2);border-radius:6px;color:#f1f5f9;padding:0.45rem 0.7rem;font-size:0.85rem;width:100%;box-sizing:border-box;" />
+            </div>
+            <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+                <button onclick="quickTrade('SHORT')"
+                    style="padding:0.5rem 1.1rem;background:#ef4444;color:#fff;border:none;border-radius:6px;font-size:0.85rem;font-weight:600;cursor:pointer;">
+                    📉 SHORT
+                </button>
+                <button onclick="quickTrade('LONG')"
+                    style="padding:0.5rem 1.1rem;background:#10b981;color:#fff;border:none;border-radius:6px;font-size:0.85rem;font-weight:600;cursor:pointer;">
+                    📈 LONG
+                </button>
+            </div>
+            <div id="q-msg" style="font-size:0.8rem;margin-top:0.5rem;min-height:1.2rem;"></div>
+        </div>
+
         <div class="last-update">
             Dashboard auto-refreshes every 5 seconds. Check console for real-time updates.
         </div>
     </div>
 
     <script src="/public/dashboard.js"></script>
+    <script>
+        function quickTrade(forceSide) {
+            const symbol     = document.getElementById('q-symbol').value.trim().toUpperCase();
+            const side       = forceSide;
+            const entryPrice = document.getElementById('q-entry').value;
+            const stopLoss   = document.getElementById('q-sl').value;
+            const takeProfit = document.getElementById('q-tp').value;
+            const notes      = document.getElementById('q-notes').value.trim();
+            const msgEl      = document.getElementById('q-msg');
+
+            function msg(text, err) {
+                msgEl.textContent = text;
+                msgEl.style.color = err ? '#ef4444' : '#10b981';
+                setTimeout(() => { msgEl.textContent = ''; }, 4000);
+            }
+
+            if (!symbol)     return msg('Symbol is required', true);
+            if (!entryPrice) return msg('Entry price is required', true);
+            if (!stopLoss)   return msg('Stop loss is required', true);
+
+            const body = { symbol, side, entryPrice, stopLoss };
+            if (takeProfit) body.takeProfit = takeProfit;
+            if (notes)      body.notes = notes;
+
+            fetch('/api/manual-trade', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            })
+            .then(r => r.json().then(d => ({ ok: r.ok, d })))
+            .then(({ ok, d }) => {
+                if (!ok) return msg(d.error || 'Error opening trade', true);
+                msg('✅ ' + side + ' opened for ' + symbol, false);
+                ['q-symbol','q-entry','q-sl','q-tp','q-notes'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+            })
+            .catch(() => msg('Network error', true));
+        }
+    </script>
 </body>
 </html>

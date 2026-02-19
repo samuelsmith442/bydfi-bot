@@ -103,6 +103,7 @@ export class PaperTradingManager {
       unrealizedPnLPercent: 0,
       openedAt: new Date(),
       status: 'OPEN',
+      source: 'BOT',
     };
 
     if (this.config.takeProfitPercentage) {
@@ -121,6 +122,58 @@ export class PaperTradingManager {
     if (position.takeProfit) {
       console.log(`[PAPER]    Take profit: $${position.takeProfit.toFixed(4)}`);
     }
+
+    return position;
+  }
+
+  public openManualPosition(
+    symbol: string,
+    side: 'LONG' | 'SHORT',
+    entryPrice: number,
+    stopLoss: number,
+    takeProfit?: number,
+    notes?: string
+  ): Position | null {
+    if (this.account.openPositions.length >= this.config.maxOpenPositions) {
+      console.log(`[PAPER] Max positions (${this.config.maxOpenPositions}) reached. Cannot open ${symbol}`);
+      return null;
+    }
+
+    if (this.account.openPositions.find(p => p.symbol === symbol)) {
+      console.log(`[PAPER] Position already open for ${symbol}`);
+      return null;
+    }
+
+    const riskAmount = this.account.balance * (this.config.riskPercentage / 100);
+    const positionSize = riskAmount * this.config.leverage;
+    const quantity = positionSize / entryPrice;
+
+    const position: Position = {
+      id: uuidv4(),
+      symbol: symbol.toUpperCase(),
+      side,
+      entryPrice,
+      currentPrice: entryPrice,
+      quantity,
+      leverage: this.config.leverage,
+      stopLoss,
+      positionSize,
+      unrealizedPnL: 0,
+      unrealizedPnLPercent: 0,
+      openedAt: new Date(),
+      status: 'OPEN',
+      source: 'MANUAL',
+    };
+
+    if (takeProfit) position.takeProfit = takeProfit;
+    if (notes) position.notes = notes;
+
+    this.account.openPositions.push(position);
+    this.account.balance -= riskAmount;
+    this.saveAccount();
+
+    console.log(`[PAPER] 🖊️  Opened MANUAL ${side} position: ${symbol} @ $${entryPrice}`);
+    console.log(`[PAPER]    Size: $${positionSize.toFixed(2)} | SL: $${stopLoss}${takeProfit ? ` | TP: $${takeProfit}` : ''}`);
 
     return position;
   }
@@ -196,6 +249,8 @@ export class PaperTradingManager {
       closedAt: new Date(),
       closeReason: reason,
       duration: new Date().getTime() - position.openedAt.getTime(),
+      source: position.source,
+      ...(position.notes ? { notes: position.notes } : {}),
     };
 
     this.account.openPositions.splice(positionIndex, 1);

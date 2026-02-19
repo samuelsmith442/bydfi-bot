@@ -4,20 +4,21 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { getDashboardData } from '../services/dashboard.js';
 import { getPaperTradingData } from '../services/paper-trading-dashboard.js';
+import type { PaperTradingManager } from '../services/paper-trading.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 3000;
 
-export function startDashboardServer(): void {
+export function startDashboardServer(paperTradingManager?: PaperTradingManager): void {
   console.log(`[DASHBOARD] Attempting to start server on port ${PORT}`);
   console.log(`[DASHBOARD] PORT env variable: ${process.env.PORT || 'not set (using default 3000)'}`);
   
   const server = http.createServer((req, res) => {
     // Enable CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
     if (req.method === 'OPTIONS') {
@@ -56,6 +57,80 @@ export function startDashboardServer(): void {
         res.end(JSON.stringify(data || { message: 'No paper trading data available' }));
       } catch (error) {
         console.error('[DASHBOARD] Error in /api/paper-trading:', error);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Internal server error' }));
+      }
+      return;
+    }
+
+    // POST /api/manual-trade — open a manual paper trade
+    if (req.url === '/api/manual-trade' && req.method === 'POST') {
+      let body = '';
+      req.on('data', chunk => { body += chunk.toString(); });
+      req.on('end', () => {
+        try {
+          if (!paperTradingManager) {
+            res.writeHead(503, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Paper trading not initialised' }));
+            return;
+          }
+          const { symbol, side, entryPrice, stopLoss, takeProfit, notes } = JSON.parse(body);
+          if (!symbol || !side || !entryPrice || !stopLoss) {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'symbol, side, entryPrice and stopLoss are required' }));
+            return;
+          }
+          if (side !== 'LONG' && side !== 'SHORT') {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'side must be LONG or SHORT' }));
+            return;
+          }
+          const position = paperTradingManager.openManualPosition(
+            symbol,
+            side,
+            parseFloat(entryPrice),
+            parseFloat(stopLoss),
+            takeProfit ? parseFloat(takeProfit) : undefined,
+            notes || undefined
+          );
+          if (!position) {
+            res.writeHead(409, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Could not open position (max positions reached or already open)' }));
+            return;
+          }
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: true, position }));
+        } catch (err) {
+          console.error('[DASHBOARD] Error in /api/manual-trade:', err);
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Internal server error' }));
+        }
+      });
+      return;
+    }
+
+    // DELETE /api/close-position/:id — manually close an open position
+    const closeMatch = req.url?.match(/^\/api\/close-position\/(.+)$/);
+    if (closeMatch && req.method === 'DELETE') {
+      try {
+        if (!paperTradingManager) {
+          res.writeHead(503, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Paper trading not initialised' }));
+          return;
+        }
+        const positionId = closeMatch[1] ?? '';
+        const account = paperTradingManager.getAccount();
+        const position = account.openPositions.find(p => p.id === positionId);
+        if (!position) {
+          res.writeHead(404, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Position not found' }));
+          return;
+        }
+        const trade = paperTradingManager.closePosition(positionId, position.currentPrice, 'MANUAL');
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, trade }));
+      } catch (err) {
+        console.error('[DASHBOARD] Error in /api/close-position:', err);
         res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Internal server error' }));
       }

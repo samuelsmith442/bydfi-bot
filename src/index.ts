@@ -33,7 +33,7 @@ const paperStrategy = new PaperTradingStrategy(paperTradingManager, 6, PAPER_TRA
 async function runBot() {
   // Start dashboard server FIRST so Railway can detect the app is alive
   console.log('[BOT] Starting dashboard server for Railway health checks...');
-  startDashboardServer();
+  startDashboardServer(paperTradingManager);
   
   console.log(`[BOT] Starting BYDFi trading bot in ${config.style.toUpperCase()} mode...`);
   console.log(`[BOT] Polling interval: ${config.pollingInterval / 60000} minutes`);
