@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 import { getDashboardData } from '../services/dashboard.js';
 import { getPaperTradingData } from '../services/paper-trading-dashboard.js';
 import type { PaperTradingManager } from '../services/paper-trading.js';
+import { getLivePrice } from '../services/live-prices.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -63,6 +64,34 @@ export function startDashboardServer(paperTradingManager?: PaperTradingManager):
       return;
     }
 
+    // GET /api/price/:symbol — live price lookup for form validation
+    const priceMatch = req.url?.match(/^\/api\/price\/(.+)$/);
+    if (priceMatch && req.method === 'GET') {
+      const symbol = (priceMatch[1] ?? '').toUpperCase();
+      const price = getLivePrice(symbol);
+      if (price === null) {
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: `No live price for ${symbol}` }));
+      } else {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ symbol, price }));
+      }
+      return;
+    }
+
+    // POST /api/reset-paper-account — reset paper trading account to initial state
+    if (req.url === '/api/reset-paper-account' && req.method === 'POST') {
+      if (!paperTradingManager) {
+        res.writeHead(503, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Paper trading not initialised' }));
+        return;
+      }
+      paperTradingManager.resetAccount();
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true, message: 'Account reset to $1000' }));
+      return;
+    }
+
     // POST /api/manual-trade — open a manual paper trade
     if (req.url === '/api/manual-trade' && req.method === 'POST') {
       let body = '';
@@ -74,7 +103,7 @@ export function startDashboardServer(paperTradingManager?: PaperTradingManager):
             res.end(JSON.stringify({ error: 'Paper trading not initialised' }));
             return;
           }
-          const { symbol, side, entryPrice, stopLoss, takeProfit, notes } = JSON.parse(body);
+          const { symbol, side, entryPrice, stopLoss, takeProfit, notes, forceSubmit } = JSON.parse(body);
           if (!symbol || !side || !entryPrice || !stopLoss) {
             res.writeHead(400, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'symbol, side, entryPrice and stopLoss are required' }));
@@ -84,6 +113,23 @@ export function startDashboardServer(paperTradingManager?: PaperTradingManager):
             res.writeHead(400, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'side must be LONG or SHORT' }));
             return;
+          }
+          // Price sanity check — warn if entry deviates >50% from live price
+          const livePrice = getLivePrice(symbol);
+          if (livePrice && !forceSubmit) {
+            const entry = parseFloat(entryPrice);
+            const deviation = Math.abs(entry - livePrice) / livePrice;
+            if (deviation > 0.5) {
+              res.writeHead(409, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({
+                error: 'PRICE_WARNING',
+                message: `Entry $${entry} deviates ${(deviation*100).toFixed(0)}% from live price $${livePrice.toFixed(6)}. Send again with forceSubmit:true to override.`,
+                livePrice,
+                entryPrice: entry,
+                deviationPercent: (deviation * 100).toFixed(1),
+              }));
+              return;
+            }
           }
           const position = paperTradingManager.openManualPosition(
             symbol,

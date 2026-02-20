@@ -88,21 +88,27 @@
 
         <!-- Manual trade entry -->
         <div class="card">
-            <div class="card-title">✏️ Manual Trade Entry</div>
+            <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+                <span>✏️ Manual Trade Entry</span>
+                <button class="btn" style="background:rgba(239,68,68,0.15);color:#ef4444;font-size:0.75rem;padding:0.3rem 0.8rem;" onclick="resetAccount()">🔄 Reset Account</button>
+            </div>
             <div class="trade-form">
-                <input id="f-symbol"  type="text"   placeholder="Symbol  e.g. BTC-USDT" />
+                <input id="f-symbol"  type="text"   placeholder="Symbol  e.g. BTC-USDT" onblur="lookupPrice()" />
                 <select id="f-side">
                     <option value="SHORT">SHORT (Sell / Bear)</option>
                     <option value="LONG">LONG (Buy / Bull)</option>
                 </select>
-                <input id="f-entry" type="number" step="any" placeholder="Entry Price" />
+                <div style="position:relative;">
+                    <input id="f-entry" type="number" step="any" placeholder="Entry Price" style="width:100%;box-sizing:border-box;" />
+                    <div id="f-price-hint" style="font-size:0.72rem;color:#60a5fa;margin-top:0.2rem;"></div>
+                </div>
                 <input id="f-sl"    type="number" step="any" placeholder="Stop Loss" />
                 <input id="f-tp"    type="number" step="any" placeholder="Take Profit (optional)" />
                 <input id="f-notes" type="text"   placeholder="Notes (optional)" class="form-full" />
             </div>
             <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-                <button class="btn btn-short" onclick="submitTrade('SHORT')">📉 Open SHORT</button>
-                <button class="btn btn-long"  onclick="submitTrade('LONG')">📈 Open LONG</button>
+                <button class="btn btn-short" onclick="submitTrade('SHORT', false)">📉 Open SHORT</button>
+                <button class="btn btn-long"  onclick="submitTrade('LONG', false)">📈 Open LONG</button>
             </div>
             <div class="form-msg" id="form-msg"></div>
         </div>
@@ -232,10 +238,25 @@
             const el = document.getElementById('form-msg');
             el.textContent = text;
             el.className = 'form-msg ' + (isErr ? 'err' : 'ok');
-            setTimeout(() => { el.textContent = ''; el.className = 'form-msg'; }, 4000);
+            setTimeout(() => { el.textContent = ''; el.className = 'form-msg'; }, 5000);
         }
 
-        async function submitTrade(forceSide) {
+        async function lookupPrice() {
+            const symbol = document.getElementById('f-symbol').value.trim().toUpperCase();
+            if (!symbol) return;
+            const hint = document.getElementById('f-price-hint');
+            try {
+                const r = await fetch('/api/price/' + symbol);
+                if (!r.ok) { hint.textContent = ''; return; }
+                const d = await r.json();
+                hint.textContent = 'Live price: $' + Number(d.price).toFixed(6);
+                // Auto-fill entry if blank
+                const entryEl = document.getElementById('f-entry');
+                if (!entryEl.value) entryEl.value = d.price;
+            } catch(e) { hint.textContent = ''; }
+        }
+
+        async function submitTrade(forceSide, forceSubmit) {
             const symbol     = document.getElementById('f-symbol').value.trim().toUpperCase();
             const side       = forceSide;
             const entryPrice = document.getElementById('f-entry').value;
@@ -247,7 +268,7 @@
             if (!entryPrice) return showMsg('Entry price is required', true);
             if (!stopLoss)   return showMsg('Stop loss is required', true);
 
-            const body = { symbol, side, entryPrice, stopLoss };
+            const body = { symbol, side, entryPrice, stopLoss, forceSubmit: !!forceSubmit };
             if (takeProfit) body.takeProfit = takeProfit;
             if (notes)      body.notes = notes;
 
@@ -258,11 +279,24 @@
                     body: JSON.stringify(body),
                 });
                 const d = await r.json();
+                if (r.status === 409 && d.error === 'PRICE_WARNING') {
+                    // Show deviation warning with confirm option
+                    const confirmed = confirm(
+                        '⚠️ Price Warning!\n\n' +
+                        'Your entry: $' + d.entryPrice + '\n' +
+                        'Live price: $' + Number(d.livePrice).toFixed(6) + '\n' +
+                        'Deviation: ' + d.deviationPercent + '%\n\n' +
+                        'This looks like a typo. Submit anyway?'
+                    );
+                    if (confirmed) submitTrade(forceSide, true);
+                    return;
+                }
                 if (!r.ok) return showMsg(d.error || 'Error opening trade', true);
                 showMsg('✅ ' + side + ' position opened for ' + symbol, false);
                 ['f-symbol','f-entry','f-sl','f-tp','f-notes'].forEach(id => {
                     document.getElementById(id).value = '';
                 });
+                document.getElementById('f-price-hint').textContent = '';
                 fetchData();
             } catch(e) { showMsg('Network error', true); }
         }
@@ -274,6 +308,17 @@
                 const d = await r.json();
                 if (!r.ok) return showMsg(d.error || 'Error closing position', true);
                 showMsg('✅ Position closed for ' + symbol, false);
+                fetchData();
+            } catch(e) { showMsg('Network error', true); }
+        }
+
+        async function resetAccount() {
+            if (!confirm('⚠️ Reset paper trading account to $1000?\n\nThis will close all positions and erase all trade history. This cannot be undone.')) return;
+            try {
+                const r = await fetch('/api/reset-paper-account', { method: 'POST' });
+                const d = await r.json();
+                if (!r.ok) return showMsg(d.error || 'Reset failed', true);
+                showMsg('✅ Account reset to $1000', false);
                 fetchData();
             } catch(e) { showMsg('Network error', true); }
         }

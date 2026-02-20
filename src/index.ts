@@ -12,6 +12,7 @@ import { logEarlySignals, logConfirmedSignals, printSignalReport } from './servi
 import { PaperTradingManager } from './services/paper-trading.js';
 import { PaperTradingStrategy } from './services/paper-trading-strategy.js';
 import { updatePaperTradingDashboard } from './services/paper-trading-dashboard.js';
+import { updateLivePrices } from './services/live-prices.js';
 import type { Ticker } from './models/types.js';
 
 // CONFIGURE YOUR TRADING STYLE HERE:
@@ -45,7 +46,10 @@ async function runBot() {
     try {
       console.log('[REST] Fetching tickers...');
       const tickers = await fetchTickers();
-      console.log(`[REST] Received ${tickers.length} tickers`);
+      console.log(`[REST] Received ${tickers.length} tickers`)
+      // Keep live prices up to date for manual trade validation
+      const priceMap = new Map(tickers.map(t => [t.symbol, parseFloat(t.lastPrice)]))
+      updateLivePrices(priceMap);
       
       // Check if market is active enough for trading
       const thresholds = getAdaptiveThresholds();

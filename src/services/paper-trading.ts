@@ -310,6 +310,29 @@ export class PaperTradingManager {
     return this.account;
   }
 
+  public resetAccount(): void {
+    this.account = {
+      balance: this.config.initialBalance,
+      equity: this.config.initialBalance,
+      initialBalance: this.config.initialBalance,
+      totalPnL: 0,
+      totalPnLPercent: 0,
+      openPositions: [],
+      closedTrades: [],
+      winRate: 0,
+      totalTrades: 0,
+      winningTrades: 0,
+      losingTrades: 0,
+      largestWin: 0,
+      largestLoss: 0,
+      averageWin: 0,
+      averageLoss: 0,
+      profitFactor: 0,
+    };
+    this.saveAccount();
+    console.log(`[PAPER] 🔄 Account reset to $${this.config.initialBalance}`);
+  }
+
   public printAccountSummary(): void {
     console.log('\n' + '='.repeat(60));
     console.log('📊 PAPER TRADING ACCOUNT SUMMARY');
