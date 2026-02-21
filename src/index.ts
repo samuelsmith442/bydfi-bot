@@ -2,7 +2,7 @@
 import { fetchTickers } from './api/rest.js';
 import { streamTickers } from './api/ws.js';
 import { generateCombinedSignals } from './strategies/combined.js';
-import { detectEarlyEntries, getHighConfidenceEarlySignals } from './strategies/early-entry.js';
+import { detectEarlyEntries } from './strategies/early-entry.js';
 import { sendAlert } from './services/alerts.js';
 import { getConfig } from './config/trading-config.js';
 import { updateDashboardData } from './services/dashboard.js';
@@ -66,25 +66,18 @@ async function runBot() {
       
       // Early Entry Signals (catch moves before +10%)
       const earlySignals = detectEarlyEntries(tickers);
-      const highConfidenceEarly = getHighConfidenceEarlySignals(earlySignals);
-      
-      console.log(`[DEBUG] Total early signals: ${earlySignals.length}`);
-      console.log(`[DEBUG] High confidence early signals: ${highConfidenceEarly.length}`);
-      if (earlySignals.length > 0 && highConfidenceEarly.length === 0) {
-        console.log(`[DEBUG] Sample early signal confidence levels:`, earlySignals.slice(0, 3).map(s => ({ symbol: s.symbol, confidence: s.confidence, score: s.score })));
-      }
-      
+      // Include high AND medium confidence — high-only was too strict for quiet markets
+      const filteredEarly = earlySignals.filter(s => s.confidence === 'high' || s.confidence === 'medium');
+
+      console.log(`[EARLY] Total: ${earlySignals.length} | High+Medium: ${filteredEarly.length} | High only: ${earlySignals.filter(s => s.confidence === 'high').length}`);
+
       const maxEarly = 5; // Show top 5 early signals per type (10 total)
       const maxConfirmed = 3; // Show top 3 confirmed per type
-      
-      const earlyLongs = highConfidenceEarly.filter(s => s.type === 'EARLY_LONG').slice(0, maxEarly);
-      const earlyShorts = highConfidenceEarly.filter(s => s.type === 'EARLY_SHORT').slice(0, maxEarly);
-      
-      console.log(`[DEBUG] Early longs after filter: ${earlyLongs.length}`);
-      console.log(`[DEBUG] Early shorts after filter: ${earlyShorts.length}`);
-      if (earlyLongs.length > 0 && earlyLongs[0]) {
-        console.log(`[DEBUG] First early long:`, { symbol: earlyLongs[0].symbol, type: earlyLongs[0].type, confidence: earlyLongs[0].confidence });
-      }
+
+      const earlyLongs  = filteredEarly.filter(s => s.type === 'EARLY_LONG').slice(0, maxEarly);
+      const earlyShorts = filteredEarly.filter(s => s.type === 'EARLY_SHORT').slice(0, maxEarly);
+
+      console.log(`[EARLY] Longs: ${earlyLongs.length} | Shorts: ${earlyShorts.length}`);
       
       // Confirmed Signals (moves already in progress)
       const signals = generateCombinedSignals(tickers);
@@ -158,7 +151,7 @@ async function runBot() {
       });
       
       console.log('='.repeat(60) + '\n');
-      console.log(`[DASHBOARD] Data updated - ${highConfidenceEarly.length} early signals, ${allConfirmedSignals.length} confirmed signals\n`);
+      console.log(`[DASHBOARD] Data updated - ${allEarlySignals.length} early signals, ${allConfirmedSignals.length} confirmed signals\n`);
       
       // Print paper trading account summary and update dashboard
       if (PAPER_TRADING_ENABLED) {
