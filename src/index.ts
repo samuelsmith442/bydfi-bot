@@ -3,6 +3,7 @@ import { fetchTickers } from './api/rest.js';
 import { streamTickers } from './api/ws.js';
 import { generateCombinedSignals } from './strategies/combined.js';
 import { detectEarlyEntries } from './strategies/early-entry.js';
+import { detectMeanReversion } from './strategies/mean-reversion.js';
 import { sendAlert } from './services/alerts.js';
 import { getConfig } from './config/trading-config.js';
 import { updateDashboardData } from './services/dashboard.js';
@@ -81,10 +82,25 @@ async function runBot() {
       
       // Confirmed Signals (moves already in progress)
       const signals = generateCombinedSignals(tickers);
-      console.log(`[STRATEGY] Generated ${signals.length} confirmed signals, ${earlySignals.length} early signals`);
+      
+      // Mean Reversion Signals
+      const meanReversionSignals = await detectMeanReversion(tickers);
+      console.log(`[STRATEGY] Momentum: ${signals.length} | Mean Reversion: ${meanReversionSignals.length} | Early: ${earlySignals.length}`);
+      
+      // Convert mean reversion signals to TradingSignal format
+      const convertedMRSignals = meanReversionSignals.map(mr => ({
+        symbol: mr.symbol,
+        type: mr.score > 0 ? ('BUY' as const) : ('SELL' as const),
+        reasons: mr.reasons,
+        score: mr.score,
+        data: mr.data
+      }));
+      
+      // Combine all signals
+      const allSignals = [...signals, ...convertedMRSignals];
       
       // Update dashboard with latest data
-      const allConfirmedSignals = signals.filter(s => Math.abs(s.score) >= 3).slice(0, 10);
+      const allConfirmedSignals = allSignals.filter(s => Math.abs(s.score) >= 3).slice(0, 10);
       const allEarlySignals = [...earlyLongs, ...earlyShorts]; // Combined 10 early signals (5 long + 5 short)
       updateDashboardData(allEarlySignals, allConfirmedSignals, config.style);
       
