@@ -1,0 +1,20 @@
+{
+  "balance": 1000,
+  "equity": 1000,
+  "initialBalance": 1000,
+  "totalPnL": 0,
+  "totalPnLPercent": 0,
+  "openPositions": [],
+  "closedTrades": [],
+  "winRate": 0,
+  "totalTrades": 0,
+  "winningTrades": 0,
+  "losingTrades": 0,
+  "largestWin": 0,
+  "largestLoss": 0,
+  "averageWin": 0,
+  "averageLoss": 0,
+  "profitFactor": 0,
+  "backupTimestamp": "2026-02-22T14:41:19.270Z",
+  "backupNote": "Backup before deployment"
+}

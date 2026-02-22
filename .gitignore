@@ -30,3 +30,6 @@ build/
 
 # Debug files
 api-debug.json
+
+# Paper trading (runtime file, use backup instead)
+paper-trading-account.json

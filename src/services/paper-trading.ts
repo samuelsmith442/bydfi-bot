@@ -8,6 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const PAPER_ACCOUNT_FILE = path.join(__dirname, '../../paper-trading-account.json');
+const PAPER_BACKUP_FILE = path.join(__dirname, '../../paper-trading-backup.json');
 
 export class PaperTradingManager {
   private config: PaperTradingConfig;
@@ -20,6 +21,7 @@ export class PaperTradingManager {
 
   private loadAccount(): PaperAccount {
     try {
+      // Try to load existing account file
       if (fs.existsSync(PAPER_ACCOUNT_FILE)) {
         const data = fs.readFileSync(PAPER_ACCOUNT_FILE, 'utf-8');
         const saved = JSON.parse(data);
@@ -36,8 +38,41 @@ export class PaperTradingManager {
           closedAt: new Date(t.closedAt),
         }));
         
+        console.log('[PAPER] Loaded existing account');
         return saved;
       }
+      
+      // If no account file exists, try to restore from backup (Railway deployment scenario)
+      if (fs.existsSync(PAPER_BACKUP_FILE)) {
+        console.log('[PAPER] No account file found, restoring from backup...');
+        const backupData = fs.readFileSync(PAPER_BACKUP_FILE, 'utf-8');
+        const backup = JSON.parse(backupData);
+        
+        // Remove backup metadata if present
+        delete backup.backupTimestamp;
+        delete backup.backupNote;
+        
+        backup.openPositions = backup.openPositions.map((p: any) => ({
+          ...p,
+          openedAt: new Date(p.openedAt),
+          closedAt: p.closedAt ? new Date(p.closedAt) : undefined,
+        }));
+        
+        backup.closedTrades = backup.closedTrades.map((t: any) => ({
+          ...t,
+          openedAt: new Date(t.openedAt),
+          closedAt: new Date(t.closedAt),
+        }));
+        
+        // Save restored backup as the new account file
+        fs.writeFileSync(PAPER_ACCOUNT_FILE, JSON.stringify(backup, null, 2));
+        
+        console.log('[PAPER] ✅ Restored from backup successfully');
+        console.log(`[PAPER] Balance: $${backup.balance.toFixed(2)} | P&L: $${backup.totalPnL.toFixed(2)} | Trades: ${backup.totalTrades}`);
+        return backup;
+      }
+      
+      console.log('[PAPER] No account or backup found, creating new account');
     } catch (error) {
       console.error('[PAPER] Error loading account:', error);
     }
