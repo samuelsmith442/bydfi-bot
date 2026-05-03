@@ -1,537 +1,5 @@
 [
   {
-    "timestamp": "2026-02-14T15:31:19.350Z",
-    "symbol": "MON-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "12.10",
-    "price": "0.02483",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+12.10%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:31:19.350Z",
-    "symbol": "AZTEC-USDT",
-    "type": "CONFIRMED_SHORT",
-    "priceChange": "-12.01",
-    "price": "0.02279",
-    "score": -5,
-    "reasons": [
-      "Strong bearish momentum (-12.01%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:31:19.350Z",
-    "symbol": "AIA-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "14.67",
-    "price": "0.1305",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+14.67%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:31:19.350Z",
-    "symbol": "DEGEN-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "11.56",
-    "price": "0.000801",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+11.56%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:31:19.350Z",
-    "symbol": "LAB-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "14.21",
-    "price": "0.13512",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+14.21%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:31:19.350Z",
-    "symbol": "S-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "10.54",
-    "price": "0.0493",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+10.54%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:31:19.350Z",
-    "symbol": "TRB-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "12.19",
-    "price": "16.593",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+12.19%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:31:19.350Z",
-    "symbol": "MORPHO-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "17.46",
-    "price": "1.3582",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+17.46%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:36:19.175Z",
-    "symbol": "ESP-USDT",
-    "type": "EARLY_LONG",
-    "priceChange": "2.43",
-    "price": "0.06025",
-    "confidence": "high",
-    "triggers": [
-      "Volume surge 300.6x avg with early +2.43% move",
-      "Building momentum +2.43% on 300.6x volume",
-      "Extreme volume 300.6x - possible accumulation"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:36:19.440Z",
-    "symbol": "MUBARAK-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "27.05",
-    "price": "0.01902",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+27.05%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:36:19.440Z",
-    "symbol": "VIRTUAL-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "14.12",
-    "price": "0.6709",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+14.12%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:36:19.440Z",
-    "symbol": "AZTEC-USDT",
-    "type": "CONFIRMED_SHORT",
-    "priceChange": "-13.23",
-    "price": "0.02256",
-    "score": -5,
-    "reasons": [
-      "Strong bearish momentum (-13.23%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:36:19.440Z",
-    "symbol": "AIA-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "14.37",
-    "price": "0.1297",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+14.37%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:36:19.440Z",
-    "symbol": "DEGEN-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "11.19",
-    "price": "0.000805",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+11.19%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:36:19.440Z",
-    "symbol": "LAB-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "13.16",
-    "price": "0.13488",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+13.16%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:36:19.440Z",
-    "symbol": "TRB-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "11.54",
-    "price": "16.504",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+11.54%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:36:19.440Z",
-    "symbol": "MORPHO-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "17.94",
-    "price": "1.362",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+17.94%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:36:19.440Z",
-    "symbol": "COW-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "20.76",
-    "price": "0.235",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+20.76%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:36:19.440Z",
-    "symbol": "ENS-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "11.11",
-    "price": "6.923",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+11.11%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:41:20.336Z",
-    "symbol": "ESP-USDT",
-    "type": "EARLY_LONG",
-    "priceChange": "3.43",
-    "price": "0.06033",
-    "confidence": "high",
-    "triggers": [
-      "Volume surge 300.1x avg with early +3.43% move",
-      "Extreme volume 300.1x - possible accumulation"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:41:20.603Z",
-    "symbol": "MUBARAK-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "27.87",
-    "price": "0.01904",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+27.87%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:41:20.603Z",
-    "symbol": "VIRTUAL-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "13.78",
-    "price": "0.6657",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+13.78%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:41:20.603Z",
-    "symbol": "MON-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "11.66",
-    "price": "0.02489",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+11.66%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:41:20.603Z",
-    "symbol": "AZTEC-USDT",
-    "type": "CONFIRMED_SHORT",
-    "priceChange": "-12.20",
-    "price": "0.02259",
-    "score": -5,
-    "reasons": [
-      "Strong bearish momentum (-12.20%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:41:20.603Z",
-    "symbol": "AIA-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "16.14",
-    "price": "0.1317",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+16.14%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:41:20.603Z",
-    "symbol": "DEGEN-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "11.53",
-    "price": "0.000803",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+11.53%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:41:20.603Z",
-    "symbol": "LAB-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "14.09",
-    "price": "0.13555",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+14.09%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:41:20.603Z",
-    "symbol": "AAVE-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "10.47",
-    "price": "129.66",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+10.47%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:41:20.603Z",
-    "symbol": "S-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "10.09",
-    "price": "0.0491",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+10.09%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T15:41:20.603Z",
-    "symbol": "TRB-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "12.55",
-    "price": "16.616",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+12.55%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T16:01:28.828Z",
-    "symbol": "ESP-USDT",
-    "type": "EARLY_LONG",
-    "priceChange": "1.71",
-    "price": "0.06018",
-    "confidence": "high",
-    "triggers": [
-      "Building momentum +1.71% on 299.0x volume",
-      "Extreme volume 299.0x - possible accumulation"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T16:01:29.096Z",
-    "symbol": "MUBARAK-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "26.59",
-    "price": "0.01871",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+26.59%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T16:01:29.096Z",
-    "symbol": "VIRTUAL-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "16.49",
-    "price": "0.6776",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+16.49%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T16:01:29.096Z",
-    "symbol": "MON-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "11.09",
-    "price": "0.02465",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+11.09%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T16:01:29.096Z",
-    "symbol": "AZTEC-USDT",
-    "type": "CONFIRMED_SHORT",
-    "priceChange": "-11.59",
-    "price": "0.02265",
-    "score": -5,
-    "reasons": [
-      "Strong bearish momentum (-11.59%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T16:01:29.096Z",
-    "symbol": "AIA-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "10.10",
-    "price": "0.1286",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+10.10%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T16:01:29.096Z",
-    "symbol": "DEGEN-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "12.73",
-    "price": "0.000806",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+12.73%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T16:01:29.096Z",
-    "symbol": "LAB-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "15.76",
-    "price": "0.13743",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+15.76%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T16:01:29.096Z",
-    "symbol": "AAVE-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "10.56",
-    "price": "129.12",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+10.56%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T16:01:29.096Z",
-    "symbol": "S-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "10.81",
-    "price": "0.0492",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+10.81%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T16:01:29.096Z",
-    "symbol": "TRB-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "13.06",
-    "price": "16.599",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+13.06%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T16:06:30.288Z",
-    "symbol": "MUBARAK-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "27.02",
-    "price": "0.01871",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+27.02%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T16:06:30.288Z",
-    "symbol": "VIRTUAL-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "16.56",
-    "price": "0.6771",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+16.56%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T16:06:30.288Z",
-    "symbol": "MON-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "11.05",
-    "price": "0.02463",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+11.05%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T16:06:30.288Z",
-    "symbol": "AZTEC-USDT",
-    "type": "CONFIRMED_SHORT",
-    "priceChange": "-12.75",
-    "price": "0.02251",
-    "score": -5,
-    "reasons": [
-      "Strong bearish momentum (-12.75%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T16:06:30.288Z",
-    "symbol": "DEGEN-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "12.07",
-    "price": "0.000808",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+12.07%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T16:06:30.288Z",
-    "symbol": "LAB-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "16.00",
-    "price": "0.1386",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+16.00%)"
-    ]
-  },
-  {
-    "timestamp": "2026-02-14T16:06:30.288Z",
-    "symbol": "AAVE-USDT",
-    "type": "CONFIRMED_LONG",
-    "priceChange": "11.08",
-    "price": "129.11",
-    "score": 5,
-    "reasons": [
-      "Strong bullish momentum (+11.08%)"
-    ]
-  },
-  {
     "timestamp": "2026-02-14T16:06:30.288Z",
     "symbol": "S-USDT",
     "type": "CONFIRMED_LONG",
@@ -10827,7 +10295,7 @@
     ]
   },
   {
-    "timestamp": "2026-02-22T14:36:19.135Z",
+    "timestamp": "2026-02-22T14:32:08.469Z",
     "symbol": "VTHO-USDT",
     "type": "EARLY_LONG",
     "priceChange": "2.81",
@@ -10839,195 +10307,327 @@
     ]
   },
   {
-    "timestamp": "2026-02-22T14:36:19.135Z",
+    "timestamp": "2026-02-22T14:32:08.469Z",
     "symbol": "AZTEC-USDT",
     "type": "EARLY_SHORT",
-    "priceChange": "-12.19",
-    "price": "0.03018",
+    "priceChange": "-12.39",
+    "price": "0.02991",
     "confidence": "medium",
     "triggers": [
-      "Above-avg volume 478.6x on -12.19% drop"
+      "Above-avg volume 478.6x on -12.39% drop"
     ]
   },
   {
-    "timestamp": "2026-02-22T14:36:21.986Z",
+    "timestamp": "2026-02-22T14:32:09.573Z",
+    "symbol": "AGLD-USDT",
+    "type": "CONFIRMED_LONG",
+    "priceChange": "30.85",
+    "price": "0.3474",
+    "score": 5,
+    "reasons": [
+      "Strong bullish momentum (+30.85%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:32:09.573Z",
+    "symbol": "ESP-USDT",
+    "type": "CONFIRMED_SHORT",
+    "priceChange": "-14.73",
+    "price": "0.07121",
+    "score": -5,
+    "reasons": [
+      "Strong bearish momentum (-14.73%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:32:09.573Z",
+    "symbol": "AZTEC-USDT",
+    "type": "CONFIRMED_SHORT",
+    "priceChange": "-12.39",
+    "price": "0.02991",
+    "score": -5,
+    "reasons": [
+      "Strong bearish momentum (-12.39%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:32:09.573Z",
+    "symbol": "SAPIEN-USDT",
+    "type": "CONFIRMED_LONG",
+    "priceChange": "16.95",
+    "price": "0.10267",
+    "score": 5,
+    "reasons": [
+      "Strong bullish momentum (+16.95%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:32:09.573Z",
+    "symbol": "BEL-USDT",
+    "type": "CONFIRMED_LONG",
+    "priceChange": "17.67",
+    "price": "0.1119",
+    "score": 5,
+    "reasons": [
+      "Strong bullish momentum (+17.67%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:32:09.573Z",
+    "symbol": "SIREN-USDT",
+    "type": "CONFIRMED_LONG",
+    "priceChange": "32.05",
+    "price": "0.28137",
+    "score": 5,
+    "reasons": [
+      "Strong bullish momentum (+32.05%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:32:09.573Z",
+    "symbol": "ALLO-USDT",
+    "type": "CONFIRMED_SHORT",
+    "priceChange": "-13.26",
+    "price": "0.1191",
+    "score": -5,
+    "reasons": [
+      "Strong bearish momentum (-13.26%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:32:09.573Z",
+    "symbol": "KITE-USDT",
+    "type": "CONFIRMED_LONG",
+    "priceChange": "10.24",
+    "price": "0.24807",
+    "score": 5,
+    "reasons": [
+      "Strong bullish momentum (+10.24%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:32:09.573Z",
+    "symbol": "NOM-USDT",
+    "type": "CONFIRMED_SHORT",
+    "priceChange": "-11.60",
+    "price": "0.004893",
+    "score": -5,
+    "reasons": [
+      "Strong bearish momentum (-11.60%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:32:09.573Z",
+    "symbol": "TAG-USDT",
+    "type": "CONFIRMED_LONG",
+    "priceChange": "11.60",
+    "price": "0.000384",
+    "score": 5,
+    "reasons": [
+      "Strong bullish momentum (+11.60%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:37:15.534Z",
+    "symbol": "VTHO-USDT",
+    "type": "EARLY_LONG",
+    "priceChange": "3.15",
+    "price": "0.000623",
+    "confidence": "high",
+    "triggers": [
+      "Volume surge 2.5x avg with early +3.15% move"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:37:15.534Z",
+    "symbol": "AZTEC-USDT",
+    "type": "EARLY_SHORT",
+    "priceChange": "-12.54",
+    "price": "0.03013",
+    "confidence": "medium",
+    "triggers": [
+      "Above-avg volume 478.6x on -12.54% drop"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:37:16.059Z",
     "symbol": "AGLD-USDT",
     "type": "CONFIRMED_LONG",
     "priceChange": "32.88",
-    "price": "0.3443",
+    "price": "0.3451",
     "score": 5,
     "reasons": [
       "Strong bullish momentum (+32.88%)"
     ]
   },
   {
-    "timestamp": "2026-02-22T14:36:21.986Z",
+    "timestamp": "2026-02-22T14:37:16.059Z",
     "symbol": "ESP-USDT",
     "type": "CONFIRMED_SHORT",
-    "priceChange": "-14.38",
-    "price": "0.07122",
+    "priceChange": "-14.43",
+    "price": "0.07108",
     "score": -5,
     "reasons": [
-      "Strong bearish momentum (-14.38%)"
+      "Strong bearish momentum (-14.43%)"
     ]
   },
   {
-    "timestamp": "2026-02-22T14:36:21.986Z",
+    "timestamp": "2026-02-22T14:37:16.059Z",
     "symbol": "AZTEC-USDT",
     "type": "CONFIRMED_SHORT",
-    "priceChange": "-12.19",
-    "price": "0.03018",
+    "priceChange": "-12.54",
+    "price": "0.03013",
     "score": -5,
     "reasons": [
-      "Strong bearish momentum (-12.19%)"
+      "Strong bearish momentum (-12.54%)"
     ]
   },
   {
-    "timestamp": "2026-02-22T14:36:21.986Z",
+    "timestamp": "2026-02-22T14:37:16.059Z",
     "symbol": "SAPIEN-USDT",
     "type": "CONFIRMED_LONG",
-    "priceChange": "16.41",
-    "price": "0.10273",
+    "priceChange": "17.27",
+    "price": "0.10341",
     "score": 5,
     "reasons": [
-      "Strong bullish momentum (+16.41%)"
+      "Strong bullish momentum (+17.27%)"
     ]
   },
   {
-    "timestamp": "2026-02-22T14:36:21.986Z",
+    "timestamp": "2026-02-22T14:37:16.059Z",
     "symbol": "BEL-USDT",
     "type": "CONFIRMED_LONG",
-    "priceChange": "18.19",
-    "price": "0.1124",
+    "priceChange": "18.93",
+    "price": "0.1131",
     "score": 5,
     "reasons": [
-      "Strong bullish momentum (+18.19%)"
+      "Strong bullish momentum (+18.93%)"
     ]
   },
   {
-    "timestamp": "2026-02-22T14:36:21.986Z",
+    "timestamp": "2026-02-22T14:37:16.059Z",
     "symbol": "SIREN-USDT",
     "type": "CONFIRMED_LONG",
-    "priceChange": "32.15",
-    "price": "0.28076",
+    "priceChange": "31.51",
+    "price": "0.27911",
     "score": 5,
     "reasons": [
-      "Strong bullish momentum (+32.15%)"
+      "Strong bullish momentum (+31.51%)"
     ]
   },
   {
-    "timestamp": "2026-02-22T14:36:21.986Z",
+    "timestamp": "2026-02-22T14:37:16.059Z",
     "symbol": "ALLO-USDT",
     "type": "CONFIRMED_SHORT",
-    "priceChange": "-13.08",
-    "price": "0.119",
+    "priceChange": "-12.68",
+    "price": "0.1191",
     "score": -5,
     "reasons": [
-      "Strong bearish momentum (-13.08%)"
+      "Strong bearish momentum (-12.68%)"
     ]
   },
   {
-    "timestamp": "2026-02-22T14:36:21.986Z",
+    "timestamp": "2026-02-22T14:37:16.059Z",
     "symbol": "KITE-USDT",
     "type": "CONFIRMED_LONG",
-    "priceChange": "10.63",
-    "price": "0.24845",
+    "priceChange": "11.05",
+    "price": "0.24933",
     "score": 5,
     "reasons": [
-      "Strong bullish momentum (+10.63%)"
+      "Strong bullish momentum (+11.05%)"
     ]
   },
   {
-    "timestamp": "2026-02-22T14:36:21.986Z",
+    "timestamp": "2026-02-22T14:37:16.059Z",
     "symbol": "NOM-USDT",
     "type": "CONFIRMED_SHORT",
-    "priceChange": "-11.12",
-    "price": "0.004909",
+    "priceChange": "-11.04",
+    "price": "0.004908",
     "score": -5,
     "reasons": [
-      "Strong bearish momentum (-11.12%)"
+      "Strong bearish momentum (-11.04%)"
     ]
   },
   {
-    "timestamp": "2026-02-22T14:36:21.986Z",
+    "timestamp": "2026-02-22T14:37:16.059Z",
     "symbol": "TAG-USDT",
     "type": "CONFIRMED_LONG",
-    "priceChange": "11.40",
-    "price": "0.000384",
+    "priceChange": "11.09",
+    "price": "0.0003826",
     "score": 5,
     "reasons": [
-      "Strong bullish momentum (+11.40%)"
+      "Strong bullish momentum (+11.09%)"
     ]
   },
   {
-    "timestamp": "2026-02-22T14:41:19.671Z",
+    "timestamp": "2026-02-22T14:42:13.785Z",
     "symbol": "VTHO-USDT",
     "type": "EARLY_LONG",
-    "priceChange": "2.81",
+    "priceChange": "2.48",
     "price": "0.000621",
     "confidence": "high",
     "triggers": [
-      "Volume surge 2.5x avg with early +2.81% move",
-      "Building momentum +2.81% on 2.5x volume"
+      "Volume surge 2.5x avg with early +2.48% move",
+      "Building momentum +2.48% on 2.5x volume"
     ]
   },
   {
-    "timestamp": "2026-02-22T14:41:19.671Z",
+    "timestamp": "2026-02-22T14:42:13.785Z",
     "symbol": "AZTEC-USDT",
     "type": "EARLY_SHORT",
-    "priceChange": "-11.39",
-    "price": "0.03033",
+    "priceChange": "-11.63",
+    "price": "0.03039",
     "confidence": "medium",
     "triggers": [
-      "Above-avg volume 478.6x on -11.39% drop"
+      "Above-avg volume 478.6x on -11.63% drop"
     ]
   },
   {
-    "timestamp": "2026-02-22T14:41:20.160Z",
+    "timestamp": "2026-02-22T14:42:14.085Z",
     "symbol": "AGLD-USDT",
     "type": "CONFIRMED_LONG",
-    "priceChange": "36.01",
-    "price": "0.3505",
+    "priceChange": "37.22",
+    "price": "0.3565",
     "score": 5,
     "reasons": [
-      "Strong bullish momentum (+36.01%)"
+      "Strong bullish momentum (+37.22%)"
     ]
   },
   {
-    "timestamp": "2026-02-22T14:41:20.160Z",
+    "timestamp": "2026-02-22T14:42:14.085Z",
     "symbol": "ESP-USDT",
     "type": "CONFIRMED_SHORT",
-    "priceChange": "-13.81",
-    "price": "0.07156",
+    "priceChange": "-14.25",
+    "price": "0.07149",
     "score": -5,
     "reasons": [
-      "Strong bearish momentum (-13.81%)"
+      "Strong bearish momentum (-14.25%)"
     ]
   },
   {
-    "timestamp": "2026-02-22T14:41:20.160Z",
+    "timestamp": "2026-02-22T14:42:14.085Z",
     "symbol": "AZTEC-USDT",
     "type": "CONFIRMED_SHORT",
-    "priceChange": "-11.39",
-    "price": "0.03033",
+    "priceChange": "-11.63",
+    "price": "0.03039",
     "score": -5,
     "reasons": [
-      "Strong bearish momentum (-11.39%)"
+      "Strong bearish momentum (-11.63%)"
     ]
   },
   {
-    "timestamp": "2026-02-22T14:41:20.160Z",
+    "timestamp": "2026-02-22T14:42:14.085Z",
     "symbol": "SAPIEN-USDT",
     "type": "CONFIRMED_LONG",
-    "priceChange": "16.40",
-    "price": "0.10289",
+    "priceChange": "16.37",
+    "price": "0.10287",
     "score": 5,
     "reasons": [
-      "Strong bullish momentum (+16.40%)"
+      "Strong bullish momentum (+16.37%)"
     ]
   },
   {
-    "timestamp": "2026-02-22T14:41:20.160Z",
+    "timestamp": "2026-02-22T14:42:14.085Z",
     "symbol": "BEL-USDT",
     "type": "CONFIRMED_LONG",
     "priceChange": "19.77",
@@ -11038,58 +10638,457 @@
     ]
   },
   {
-    "timestamp": "2026-02-22T14:41:20.160Z",
+    "timestamp": "2026-02-22T14:42:14.085Z",
     "symbol": "SIREN-USDT",
     "type": "CONFIRMED_LONG",
-    "priceChange": "32.85",
-    "price": "0.28165",
+    "priceChange": "33.83",
+    "price": "0.28323",
     "score": 5,
     "reasons": [
-      "Strong bullish momentum (+32.85%)"
+      "Strong bullish momentum (+33.83%)"
     ]
   },
   {
-    "timestamp": "2026-02-22T14:41:20.160Z",
+    "timestamp": "2026-02-22T14:42:14.085Z",
     "symbol": "ALLO-USDT",
     "type": "CONFIRMED_SHORT",
-    "priceChange": "-13.03",
-    "price": "0.1188",
+    "priceChange": "-13.59",
+    "price": "0.1183",
     "score": -5,
     "reasons": [
-      "Strong bearish momentum (-13.03%)"
+      "Strong bearish momentum (-13.59%)"
     ]
   },
   {
-    "timestamp": "2026-02-22T14:41:20.160Z",
+    "timestamp": "2026-02-22T14:42:14.085Z",
     "symbol": "KITE-USDT",
     "type": "CONFIRMED_LONG",
-    "priceChange": "11.51",
-    "price": "0.25071",
+    "priceChange": "11.13",
+    "price": "0.24981",
     "score": 5,
     "reasons": [
-      "Strong bullish momentum (+11.51%)"
+      "Strong bullish momentum (+11.13%)"
     ]
   },
   {
-    "timestamp": "2026-02-22T14:41:20.160Z",
+    "timestamp": "2026-02-22T14:42:14.085Z",
     "symbol": "NOM-USDT",
     "type": "CONFIRMED_SHORT",
-    "priceChange": "-10.90",
-    "price": "0.004905",
+    "priceChange": "-10.96",
+    "price": "0.004907",
     "score": -5,
     "reasons": [
-      "Strong bearish momentum (-10.90%)"
+      "Strong bearish momentum (-10.96%)"
     ]
   },
   {
-    "timestamp": "2026-02-22T14:41:20.160Z",
+    "timestamp": "2026-02-22T14:42:14.085Z",
     "symbol": "TAG-USDT",
     "type": "CONFIRMED_LONG",
-    "priceChange": "11.04",
-    "price": "0.0003823",
+    "priceChange": "10.92",
+    "price": "0.0003819",
     "score": 5,
     "reasons": [
-      "Strong bullish momentum (+11.04%)"
+      "Strong bullish momentum (+10.92%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:47:14.772Z",
+    "symbol": "VTHO-USDT",
+    "type": "EARLY_LONG",
+    "priceChange": "2.48",
+    "price": "0.000619",
+    "confidence": "high",
+    "triggers": [
+      "Volume surge 2.5x avg with early +2.48% move",
+      "Building momentum +2.48% on 2.5x volume"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:47:14.772Z",
+    "symbol": "AZTEC-USDT",
+    "type": "EARLY_SHORT",
+    "priceChange": "-10.98",
+    "price": "0.03047",
+    "confidence": "medium",
+    "triggers": [
+      "Above-avg volume 478.5x on -10.98% drop"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:47:15.027Z",
+    "symbol": "AGLD-USDT",
+    "type": "CONFIRMED_LONG",
+    "priceChange": "34.97",
+    "price": "0.352",
+    "score": 5,
+    "reasons": [
+      "Strong bullish momentum (+34.97%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:47:15.027Z",
+    "symbol": "ESP-USDT",
+    "type": "CONFIRMED_SHORT",
+    "priceChange": "-14.25",
+    "price": "0.07155",
+    "score": -5,
+    "reasons": [
+      "Strong bearish momentum (-14.25%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:47:15.027Z",
+    "symbol": "AZTEC-USDT",
+    "type": "CONFIRMED_SHORT",
+    "priceChange": "-10.98",
+    "price": "0.03047",
+    "score": -5,
+    "reasons": [
+      "Strong bearish momentum (-10.98%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:47:15.027Z",
+    "symbol": "SAPIEN-USDT",
+    "type": "CONFIRMED_LONG",
+    "priceChange": "16.30",
+    "price": "0.10291",
+    "score": 5,
+    "reasons": [
+      "Strong bullish momentum (+16.30%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:47:15.027Z",
+    "symbol": "BEL-USDT",
+    "type": "CONFIRMED_LONG",
+    "priceChange": "19.56",
+    "price": "0.1137",
+    "score": 5,
+    "reasons": [
+      "Strong bullish momentum (+19.56%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:47:15.027Z",
+    "symbol": "SIREN-USDT",
+    "type": "CONFIRMED_LONG",
+    "priceChange": "35.04",
+    "price": "0.28461",
+    "score": 5,
+    "reasons": [
+      "Strong bullish momentum (+35.04%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:47:15.027Z",
+    "symbol": "ALLO-USDT",
+    "type": "CONFIRMED_SHORT",
+    "priceChange": "-14.53",
+    "price": "0.1171",
+    "score": -5,
+    "reasons": [
+      "Strong bearish momentum (-14.53%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:47:15.027Z",
+    "symbol": "KITE-USDT",
+    "type": "CONFIRMED_LONG",
+    "priceChange": "11.36",
+    "price": "0.24901",
+    "score": 5,
+    "reasons": [
+      "Strong bullish momentum (+11.36%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:47:15.027Z",
+    "symbol": "NOM-USDT",
+    "type": "CONFIRMED_SHORT",
+    "priceChange": "-10.93",
+    "price": "0.004913",
+    "score": -5,
+    "reasons": [
+      "Strong bearish momentum (-10.93%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:47:15.027Z",
+    "symbol": "TAG-USDT",
+    "type": "CONFIRMED_LONG",
+    "priceChange": "10.54",
+    "price": "0.0003818",
+    "score": 5,
+    "reasons": [
+      "Strong bullish momentum (+10.54%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:52:14.128Z",
+    "symbol": "VTHO-USDT",
+    "type": "EARLY_LONG",
+    "priceChange": "2.32",
+    "price": "0.000618",
+    "confidence": "high",
+    "triggers": [
+      "Volume surge 2.5x avg with early +2.32% move",
+      "Building momentum +2.32% on 2.5x volume"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:52:14.128Z",
+    "symbol": "AZTEC-USDT",
+    "type": "EARLY_SHORT",
+    "priceChange": "-10.30",
+    "price": "0.03057",
+    "confidence": "medium",
+    "triggers": [
+      "Above-avg volume 478.5x on -10.30% drop"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:52:14.697Z",
+    "symbol": "AGLD-USDT",
+    "type": "CONFIRMED_LONG",
+    "priceChange": "35.85",
+    "price": "0.3539",
+    "score": 5,
+    "reasons": [
+      "Strong bullish momentum (+35.85%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:52:14.697Z",
+    "symbol": "ESP-USDT",
+    "type": "CONFIRMED_SHORT",
+    "priceChange": "-15.21",
+    "price": "0.0723",
+    "score": -5,
+    "reasons": [
+      "Strong bearish momentum (-15.21%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:52:14.697Z",
+    "symbol": "AZTEC-USDT",
+    "type": "CONFIRMED_SHORT",
+    "priceChange": "-10.30",
+    "price": "0.03057",
+    "score": -5,
+    "reasons": [
+      "Strong bearish momentum (-10.30%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:52:14.697Z",
+    "symbol": "SAPIEN-USDT",
+    "type": "CONFIRMED_LONG",
+    "priceChange": "17.35",
+    "price": "0.10321",
+    "score": 5,
+    "reasons": [
+      "Strong bullish momentum (+17.35%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:52:14.697Z",
+    "symbol": "BEL-USDT",
+    "type": "CONFIRMED_LONG",
+    "priceChange": "18.89",
+    "price": "0.1133",
+    "score": 5,
+    "reasons": [
+      "Strong bullish momentum (+18.89%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:52:14.697Z",
+    "symbol": "SIREN-USDT",
+    "type": "CONFIRMED_LONG",
+    "priceChange": "35.44",
+    "price": "0.28565",
+    "score": 5,
+    "reasons": [
+      "Strong bullish momentum (+35.44%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:52:14.697Z",
+    "symbol": "ALLO-USDT",
+    "type": "CONFIRMED_SHORT",
+    "priceChange": "-15.10",
+    "price": "0.1164",
+    "score": -5,
+    "reasons": [
+      "Strong bearish momentum (-15.10%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:52:14.697Z",
+    "symbol": "KITE-USDT",
+    "type": "CONFIRMED_LONG",
+    "priceChange": "11.21",
+    "price": "0.2476",
+    "score": 5,
+    "reasons": [
+      "Strong bullish momentum (+11.21%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:52:14.697Z",
+    "symbol": "NOM-USDT",
+    "type": "CONFIRMED_SHORT",
+    "priceChange": "-10.63",
+    "price": "0.004916",
+    "score": -5,
+    "reasons": [
+      "Strong bearish momentum (-10.63%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:52:14.697Z",
+    "symbol": "PIPPIN-USDT",
+    "type": "CONFIRMED_LONG",
+    "priceChange": "25.33",
+    "price": "0.62637",
+    "score": 5,
+    "reasons": [
+      "Strong bullish momentum (+25.33%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:57:15.836Z",
+    "symbol": "VTHO-USDT",
+    "type": "EARLY_LONG",
+    "priceChange": "2.82",
+    "price": "0.000619",
+    "confidence": "high",
+    "triggers": [
+      "Volume surge 2.5x avg with early +2.82% move",
+      "Building momentum +2.82% on 2.5x volume"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:57:15.836Z",
+    "symbol": "AZTEC-USDT",
+    "type": "EARLY_SHORT",
+    "priceChange": "-10.79",
+    "price": "0.03068",
+    "confidence": "medium",
+    "triggers": [
+      "Above-avg volume 478.5x on -10.79% drop"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:57:16.167Z",
+    "symbol": "AGLD-USDT",
+    "type": "CONFIRMED_LONG",
+    "priceChange": "36.18",
+    "price": "0.3523",
+    "score": 5,
+    "reasons": [
+      "Strong bullish momentum (+36.18%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:57:16.167Z",
+    "symbol": "ESP-USDT",
+    "type": "CONFIRMED_SHORT",
+    "priceChange": "-14.40",
+    "price": "0.07274",
+    "score": -5,
+    "reasons": [
+      "Strong bearish momentum (-14.40%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:57:16.167Z",
+    "symbol": "AZTEC-USDT",
+    "type": "CONFIRMED_SHORT",
+    "priceChange": "-10.79",
+    "price": "0.03068",
+    "score": -5,
+    "reasons": [
+      "Strong bearish momentum (-10.79%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:57:16.167Z",
+    "symbol": "SAPIEN-USDT",
+    "type": "CONFIRMED_LONG",
+    "priceChange": "17.28",
+    "price": "0.10289",
+    "score": 5,
+    "reasons": [
+      "Strong bullish momentum (+17.28%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:57:16.167Z",
+    "symbol": "BEL-USDT",
+    "type": "CONFIRMED_LONG",
+    "priceChange": "18.76",
+    "price": "0.1127",
+    "score": 5,
+    "reasons": [
+      "Strong bullish momentum (+18.76%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:57:16.167Z",
+    "symbol": "SIREN-USDT",
+    "type": "CONFIRMED_LONG",
+    "priceChange": "34.44",
+    "price": "0.28261",
+    "score": 5,
+    "reasons": [
+      "Strong bullish momentum (+34.44%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:57:16.167Z",
+    "symbol": "ALLO-USDT",
+    "type": "CONFIRMED_SHORT",
+    "priceChange": "-15.35",
+    "price": "0.1164",
+    "score": -5,
+    "reasons": [
+      "Strong bearish momentum (-15.35%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:57:16.167Z",
+    "symbol": "KITE-USDT",
+    "type": "CONFIRMED_LONG",
+    "priceChange": "10.16",
+    "price": "0.24719",
+    "score": 5,
+    "reasons": [
+      "Strong bullish momentum (+10.16%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:57:16.167Z",
+    "symbol": "NOM-USDT",
+    "type": "CONFIRMED_SHORT",
+    "priceChange": "-10.53",
+    "price": "0.004927",
+    "score": -5,
+    "reasons": [
+      "Strong bearish momentum (-10.53%)"
+    ]
+  },
+  {
+    "timestamp": "2026-02-22T14:57:16.167Z",
+    "symbol": "PIPPIN-USDT",
+    "type": "CONFIRMED_LONG",
+    "priceChange": "24.50",
+    "price": "0.62179",
+    "score": 5,
+    "reasons": [
+      "Strong bullish momentum (+24.50%)"
     ]
   }
 ]

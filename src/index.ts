@@ -4,6 +4,7 @@ import { streamTickers } from './api/ws.js';
 import { generateCombinedSignals } from './strategies/combined.js';
 import { detectEarlyEntries } from './strategies/early-entry.js';
 import { detectMeanReversion } from './strategies/mean-reversion.js';
+import { detectAISignals, checkAIServiceHealth } from './strategies/ai-strategy.js';
 import { sendAlert } from './services/alerts.js';
 import { getConfig } from './config/trading-config.js';
 import { updateDashboardData } from './services/dashboard.js';
@@ -40,6 +41,19 @@ async function runBot() {
   console.log(`[BOT] Starting BYDFi trading bot in ${config.style.toUpperCase()} mode...`);
   console.log(`[BOT] Polling interval: ${config.pollingInterval / 60000} minutes`);
   console.log(`[BOT] Max alerts per cycle: ${config.maxAlertsPerCycle}`);
+  
+  // Check AI service availability if enabled
+  const AI_ENABLED = process.env.ENABLE_AI_STRATEGY === 'true';
+  if (AI_ENABLED) {
+    console.log('[BOT] AI Strategy enabled - checking TradingAgents service...');
+    const aiHealthy = await checkAIServiceHealth();
+    if (aiHealthy) {
+      console.log('[BOT] ✅ TradingAgents API is available');
+    } else {
+      console.log('[BOT] ⚠️  TradingAgents API not available - AI signals will be skipped');
+    }
+  }
+  
   console.log('='.repeat(60) + '\n');
   
   // Function to fetch and process tickers
@@ -85,7 +99,24 @@ async function runBot() {
       
       // Mean Reversion Signals
       const meanReversionSignals = await detectMeanReversion(tickers);
-      console.log(`[STRATEGY] Momentum: ${signals.length} | Mean Reversion: ${meanReversionSignals.length} | Early: ${earlySignals.length}`);
+      
+      // AI-Powered Signals (if enabled)
+      let aiSignals: any[] = [];
+      const AI_ENABLED = process.env.ENABLE_AI_STRATEGY === 'true';
+      
+      if (AI_ENABLED) {
+        try {
+          aiSignals = await detectAISignals(tickers, {
+            minVolume: 500000,
+            minConfidence: 0.6,
+            maxSymbols: 3  // Limit to 3 to control costs
+          });
+        } catch (error: any) {
+          console.error('[AI] Error detecting AI signals:', error.message);
+        }
+      }
+      
+      console.log(`[STRATEGY] Momentum: ${signals.length} | Mean Reversion: ${meanReversionSignals.length} | AI: ${aiSignals.length} | Early: ${earlySignals.length}`);
       
       // Convert mean reversion signals to TradingSignal format
       const convertedMRSignals = meanReversionSignals.map(mr => ({
@@ -96,8 +127,17 @@ async function runBot() {
         data: mr.data
       }));
       
+      // Convert AI signals to TradingSignal format
+      const convertedAISignals = aiSignals.map(ai => ({
+        symbol: ai.symbol,
+        type: ai.score > 0 ? ('BUY' as const) : ('SELL' as const),
+        reasons: ai.reasons,
+        score: ai.score,
+        data: ai.data
+      }));
+      
       // Combine all signals
-      const allSignals = [...signals, ...convertedMRSignals];
+      const allSignals = [...signals, ...convertedMRSignals, ...convertedAISignals];
       
       // Update dashboard with latest data
       const allConfirmedSignals = allSignals.filter(s => Math.abs(s.score) >= 3).slice(0, 10);
