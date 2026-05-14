@@ -4,7 +4,7 @@ import { streamTickers } from './api/ws.js';
 import { generateCombinedSignals } from './strategies/combined.js';
 import { detectEarlyEntries } from './strategies/early-entry.js';
 import { detectMeanReversion } from './strategies/mean-reversion.js';
-import { detectAISignals, checkAIServiceHealth } from './strategies/ai-strategy.js';
+import { detectAISignals, getMacroSentiment, checkAIServiceHealth } from './strategies/ai-strategy.js';
 import { sendAlert } from './services/alerts.js';
 import { getConfig } from './config/trading-config.js';
 import { updateDashboardData } from './services/dashboard.js';
@@ -26,7 +26,12 @@ const config = getConfig(TRADING_STYLE);
 const PAPER_TRADING_ENABLED = true;
 const paperTradingManager = new PaperTradingManager({
   initialBalance: 1000,
-  leverage: 3,
+  leverage: 3,           // fallback if no confidence supplied
+  leverageTiers: {
+    high:   5,           // high-confidence signals → 5x
+    medium: 3,           // medium-confidence signals → 3x
+    low:    1,           // low-confidence signals → 1x (minimal exposure)
+  },
   riskPercentage: 4,
   stopLossPercentage: 5,
   maxOpenPositions: 5,
@@ -80,7 +85,7 @@ async function runBot() {
       console.log(`[BOT] Market active - generating signals...`);
       
       // Early Entry Signals (catch moves before +10%)
-      const earlySignals = detectEarlyEntries(tickers);
+      const earlySignals = await detectEarlyEntries(tickers);
       // Include high AND medium confidence — high-only was too strict for quiet markets
       const filteredEarly = earlySignals.filter(s => s.confidence === 'high' || s.confidence === 'medium');
 
@@ -103,20 +108,28 @@ async function runBot() {
       // AI-Powered Signals (if enabled)
       let aiSignals: any[] = [];
       const AI_ENABLED = process.env.ENABLE_AI_STRATEGY === 'true';
-      
+      let macroBearish = false;
+
       if (AI_ENABLED) {
         try {
+          // Fetch macro sentiment once — used as pre-filter for ALL strategies
+          const macro = await getMacroSentiment();
+          macroBearish = macro?.sentiment === 'BEARISH' && (macro?.confidence ?? 0) >= 0.6;
+          if (macro) {
+            console.log(`[MACRO] ${macro.sentiment} (${(macro.confidence * 100).toFixed(0)}% confidence)`);
+          }
+
           aiSignals = await detectAISignals(tickers, {
             minVolume: 500000,
             minConfidence: 0.6,
-            maxSymbols: 3  // Limit to 3 to control costs
+            maxSymbols: 3
           });
         } catch (error: any) {
           console.error('[AI] Error detecting AI signals:', error.message);
         }
       }
-      
-      console.log(`[STRATEGY] Momentum: ${signals.length} | Mean Reversion: ${meanReversionSignals.length} | AI: ${aiSignals.length} | Early: ${earlySignals.length}`);
+
+      console.log(`[STRATEGY] Momentum: ${signals.length} | Mean Reversion: ${meanReversionSignals.length} | AI: ${aiSignals.length} | Early: ${earlySignals.length}${macroBearish ? ' | ⚠️ MACRO BEARISH' : ''}`);
       
       // Convert mean reversion signals to TradingSignal format
       const convertedMRSignals = meanReversionSignals.map(mr => ({
@@ -136,8 +149,11 @@ async function runBot() {
         data: ai.data
       }));
       
-      // Combine all signals
-      const allSignals = [...signals, ...convertedMRSignals, ...convertedAISignals];
+      // Combine all signals, applying macro pre-filter to suppress BUYs when macro is BEARISH
+      const rawSignals = [...signals, ...convertedMRSignals, ...convertedAISignals];
+      const allSignals = macroBearish
+        ? rawSignals.filter(s => s.type !== 'BUY')
+        : rawSignals;
       
       // Update dashboard with latest data
       const allConfirmedSignals = allSignals.filter(s => Math.abs(s.score) >= 3).slice(0, 10);
@@ -163,7 +179,7 @@ async function runBot() {
       
       if (earlyLongs.length > 0) {
         console.log('\n🎯 Early Long Setups:');
-        earlyLongs.forEach((signal, index) => {
+        earlyLongs.forEach((signal: import('./strategies/early-entry.js').EarlySignal, index: number) => {
           const triggers = signal.triggers.join(' | ');
           sendAlert(
             `⚡#${index + 1} ${signal.symbol}`,
@@ -174,7 +190,7 @@ async function runBot() {
       
       if (earlyShorts.length > 0) {
         console.log('\n🎯 Early Short Setups:');
-        earlyShorts.forEach((signal, index) => {
+        earlyShorts.forEach((signal: import('./strategies/early-entry.js').EarlySignal, index: number) => {
           const triggers = signal.triggers.join(' | ');
           sendAlert(
             `⚡#${index + 1} ${signal.symbol}`,

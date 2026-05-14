@@ -1,6 +1,13 @@
+export interface LeverageTiers {
+  high:   number
+  medium: number
+  low:    number
+}
+
 export interface PaperTradingConfig {
   initialBalance: number;
   leverage: number;
+  leverageTiers?: LeverageTiers;
   riskPercentage: number;
   stopLossPercentage: number;
   takeProfitPercentage?: number;

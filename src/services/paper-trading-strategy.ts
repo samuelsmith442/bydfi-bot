@@ -44,12 +44,14 @@ export class PaperTradingStrategy {
       console.log(`[PAPER STRATEGY]    Volume: ${signal.volumeTrend} | Momentum: ${signal.priceMomentum} | Age: ${signal.pumpAge}`);
       console.log(`[PAPER STRATEGY]    Confidence: ${signal.confidenceLevel}% | Exhaustion: ${signal.isExhaustion ? 'YES' : 'NO'}`);
       
+      const conf = signal.confidenceLevel >= 70 ? 'high' : signal.confidenceLevel >= 40 ? 'medium' : 'low';
+
       if (side === 'SHORT' && priceChangePercent > 0) {
-        console.log(`[PAPER STRATEGY]    ✅ Opening SHORT - Exhaustion play on +${priceChangePercent.toFixed(2)}% pump`);
-        this.manager.openPosition(signal.symbol, 'SHORT', currentPrice);
+        console.log(`[PAPER STRATEGY]    ✅ Opening SHORT - Exhaustion play on +${priceChangePercent.toFixed(2)}% pump (${conf} confidence)`);
+        this.manager.openPosition(signal.symbol, 'SHORT', currentPrice, conf);
       } else if (side === 'LONG' && priceChangePercent < 0) {
-        console.log(`[PAPER STRATEGY]    ✅ Opening LONG - Bounce play on ${priceChangePercent.toFixed(2)}% dip`);
-        this.manager.openPosition(signal.symbol, 'LONG', currentPrice);
+        console.log(`[PAPER STRATEGY]    ✅ Opening LONG - Bounce play on ${priceChangePercent.toFixed(2)}% dip (${conf} confidence)`);
+        this.manager.openPosition(signal.symbol, 'LONG', currentPrice, conf);
       } else {
         console.log(`[PAPER STRATEGY]    ⏸️  Skipped - Price direction doesn't match strategy`);
       }

@@ -31,9 +31,19 @@ export interface AISignal {
   };
 }
 
+export interface MacroSentiment {
+  date: string;
+  sentiment: 'BULLISH' | 'BEARISH' | 'NEUTRAL';
+  confidence: number;
+  summary: string;
+  duration_s: number;
+}
+
 // Cache for AI decisions to avoid excessive API calls
 const aiDecisionCache = new Map<string, { decision: AIDecision, timestamp: number }>();
-const CACHE_TTL = 60 * 60 * 1000; // 1 hour
+const macroSentimentCache: { sentiment: MacroSentiment | null, timestamp: number } = { sentiment: null, timestamp: 0 };
+const CACHE_TTL = 60 * 60 * 1000;        // 1 hour for symbol analysis
+const MACRO_CACHE_TTL = 30 * 60 * 1000; // 30 min for macro sentiment
 
 /**
  * Get AI trading decision from TradingAgents service
@@ -52,23 +62,30 @@ async function getAIDecision(symbol: string): Promise<AIDecision | null> {
     console.log(`[AI] Requesting analysis for ${symbol}...`);
     
     const response = await axios.post(
-      `${TRADINGAGENTS_API_URL}/analyze-symbol`,
-      { symbol },
-      { 
-        timeout: 60000, // 60 second timeout for AI analysis
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }
+      `${TRADINGAGENTS_API_URL}/analyze`,
+      { symbol, date: new Date().toISOString().split('T')[0] },
+      { timeout: 300000, headers: { 'Content-Type': 'application/json' } }
     );
-    
-    const decision = response.data;
-    
+
+    const raw = response.data;
+
+    // Map API response to AIDecision shape
+    const decision: AIDecision = {
+      symbol,
+      decision:        raw.action as 'BUY' | 'SELL' | 'HOLD',
+      confidence:      raw.confidence,
+      reasoning:       raw.reasoning || '',
+      stopLoss:        raw.stop_loss ?? undefined,
+      positionSize:    raw.confidence >= 0.8 ? 0.05 : 0.03,
+      riskAssessment:  raw.investment_plan || '',
+      timestamp:       new Date().toISOString(),
+    };
+
     // Cache the decision
     aiDecisionCache.set(cacheKey, { decision, timestamp: Date.now() });
-    
+
     console.log(`[AI] ${symbol}: ${decision.decision} (confidence: ${(decision.confidence * 100).toFixed(1)}%)`);
-    
+
     return decision;
   } catch (error: any) {
     if (error.code === 'ECONNREFUSED') {
@@ -78,6 +95,35 @@ async function getAIDecision(symbol: string): Promise<AIDecision | null> {
     } else {
       console.error(`[AI] Error getting decision for ${symbol}:`, error.message);
     }
+    return null;
+  }
+}
+
+/**
+ * Get macro market sentiment — lightweight, runs only the News Analyst.
+ * Used as a pre-filter: if BEARISH, suppress all LONG signals.
+ */
+export async function getMacroSentiment(): Promise<MacroSentiment | null> {
+  try {
+    if (macroSentimentCache.sentiment && Date.now() - macroSentimentCache.timestamp < MACRO_CACHE_TTL) {
+      console.log(`[AI] Using cached macro sentiment: ${macroSentimentCache.sentiment.sentiment}`);
+      return macroSentimentCache.sentiment;
+    }
+
+    console.log('[AI] Fetching macro market sentiment...');
+    const response = await axios.post(
+      `${TRADINGAGENTS_API_URL}/market-sentiment`,
+      { date: new Date().toISOString().split('T')[0] },
+      { timeout: 600000, headers: { 'Content-Type': 'application/json' } }
+    );
+
+    const sentiment: MacroSentiment = response.data;
+    macroSentimentCache.sentiment = sentiment;
+    macroSentimentCache.timestamp = Date.now();
+    console.log(`[AI] Macro sentiment: ${sentiment.sentiment} (confidence: ${(sentiment.confidence * 100).toFixed(0)}%)`);
+    return sentiment;
+  } catch (error: any) {
+    console.error('[AI] Error fetching macro sentiment:', error.message);
     return null;
   }
 }
@@ -102,10 +148,17 @@ export async function detectAISignals(
     .slice(0, config.maxSymbols);
   
   console.log(`[AI] Analyzing ${topTickers.length} top tickers with TradingAgents...`);
-  
+
   if (topTickers.length === 0) {
     console.log('[AI] No tickers meet minimum volume requirement');
     return signals;
+  }
+
+  // Macro pre-filter: fetch sentiment once, suppress LONGs if BEARISH
+  const macro = await getMacroSentiment();
+  const macroBearish = macro?.sentiment === 'BEARISH' && macro.confidence >= 0.6;
+  if (macroBearish) {
+    console.log(`[AI] Macro is BEARISH (${(macro!.confidence * 100).toFixed(0)}% confidence) — LONG signals will be suppressed`);
   }
   
   // Analyze each ticker with AI
@@ -123,8 +176,8 @@ export async function detectAISignals(
       continue;
     }
     
-    // Convert AI decision to signal
-    if (aiDecision.decision === 'BUY') {
+    // Convert AI decision to signal — suppress BUY if macro is bearish
+    if (aiDecision.decision === 'BUY' && !macroBearish) {
       const confidence = aiDecision.confidence >= 0.8 ? 'HIGH' : 
                         aiDecision.confidence >= 0.65 ? 'MEDIUM' : 'LOW';
       
@@ -145,6 +198,8 @@ export async function detectAISignals(
           lastPrice: ticker.lastPrice
         }
       });
+    } else if (aiDecision.decision === 'BUY' && macroBearish) {
+      console.log(`[AI] ${ticker.symbol}: BUY suppressed — bearish macro environment`);
     } else if (aiDecision.decision === 'SELL') {
       const confidence = aiDecision.confidence >= 0.8 ? 'HIGH' : 
                         aiDecision.confidence >= 0.65 ? 'MEDIUM' : 'LOW';

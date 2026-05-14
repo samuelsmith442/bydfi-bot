@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import type { PaperTradingConfig, Position, Trade, PaperAccount } from '../models/paper-trading-types.js';
+import type { PaperTradingConfig, Position, Trade, PaperAccount, LeverageTiers } from '../models/paper-trading-types.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -105,7 +105,19 @@ export class PaperTradingManager {
     }
   }
 
-  public openPosition(symbol: string, side: 'LONG' | 'SHORT', currentPrice: number): Position | null {
+  private resolveLeverage(confidence?: 'high' | 'medium' | 'low' | 'HIGH' | 'MEDIUM' | 'LOW'): number {
+    const tiers: LeverageTiers | undefined = this.config.leverageTiers;
+    if (!tiers || !confidence) return this.config.leverage;
+    const key = confidence.toLowerCase() as 'high' | 'medium' | 'low';
+    return tiers[key] ?? this.config.leverage;
+  }
+
+  public openPosition(
+    symbol: string,
+    side: 'LONG' | 'SHORT',
+    currentPrice: number,
+    confidence?: 'high' | 'medium' | 'low' | 'HIGH' | 'MEDIUM' | 'LOW'
+  ): Position | null {
     if (this.account.openPositions.length >= this.config.maxOpenPositions) {
       console.log(`[PAPER] Max positions (${this.config.maxOpenPositions}) reached. Cannot open ${symbol}`);
       return null;
@@ -116,9 +128,10 @@ export class PaperTradingManager {
       return null;
     }
 
-    const riskAmount = this.account.balance * (this.config.riskPercentage / 100);
-    const positionSize = riskAmount * this.config.leverage;
-    const quantity = positionSize / currentPrice;
+    const leverage    = this.resolveLeverage(confidence);
+    const riskAmount   = this.account.balance * (this.config.riskPercentage / 100);
+    const positionSize = riskAmount * leverage;
+    const quantity     = positionSize / currentPrice;
 
     const stopLossPrice = side === 'LONG'
       ? currentPrice * (1 - this.config.stopLossPercentage / 100)
@@ -131,7 +144,7 @@ export class PaperTradingManager {
       entryPrice: currentPrice,
       currentPrice,
       quantity,
-      leverage: this.config.leverage,
+      leverage,
       stopLoss: stopLossPrice,
       positionSize,
       unrealizedPnL: 0,
@@ -152,7 +165,7 @@ export class PaperTradingManager {
     this.saveAccount();
 
     console.log(`[PAPER] 🔓 Opened ${side} position: ${symbol} @ $${currentPrice.toFixed(4)}`);
-    console.log(`[PAPER]    Position size: $${positionSize.toFixed(2)} (${this.config.leverage}x leverage)`);
+    console.log(`[PAPER]    Position size: $${positionSize.toFixed(2)} (${leverage}x leverage${confidence ? ` — ${confidence} confidence` : ''})`);
     console.log(`[PAPER]    Stop loss: $${stopLossPrice.toFixed(4)} (${this.config.stopLossPercentage}%)`);
     if (position.takeProfit) {
       console.log(`[PAPER]    Take profit: $${position.takeProfit.toFixed(4)}`);
@@ -179,9 +192,10 @@ export class PaperTradingManager {
       return null;
     }
 
-    const riskAmount = this.account.balance * (this.config.riskPercentage / 100);
-    const positionSize = riskAmount * this.config.leverage;
-    const quantity = positionSize / entryPrice;
+    const leverage    = this.resolveLeverage();
+    const riskAmount   = this.account.balance * (this.config.riskPercentage / 100);
+    const positionSize = riskAmount * leverage;
+    const quantity     = positionSize / entryPrice;
 
     const position: Position = {
       id: uuidv4(),
@@ -190,7 +204,7 @@ export class PaperTradingManager {
       entryPrice,
       currentPrice: entryPrice,
       quantity,
-      leverage: this.config.leverage,
+      leverage,
       stopLoss,
       positionSize,
       unrealizedPnL: 0,

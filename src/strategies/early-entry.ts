@@ -1,4 +1,5 @@
 import type { Ticker } from '../models/types.js';
+import { calculateAdaptiveMACD } from '../utils/adaptive-macd.js';
 
 export interface EarlySignal {
   symbol: string;
@@ -19,8 +20,9 @@ export interface EarlySignal {
  * 1. Volume acceleration (volume increasing faster than price)
  * 2. Small price breakouts (2-5% moves with volume)
  * 3. Momentum building (consistent small gains)
+ * 4. Adaptive MACD+ confirmation (async enrichment on top candidates)
  */
-export function detectEarlyEntries(tickers: Ticker[]): EarlySignal[] {
+function detectEarlyEntriesSync(tickers: Ticker[]): EarlySignal[] {
   const signals: EarlySignal[] = [];
   
   // Calculate average volume across all tickers for comparison
@@ -147,6 +149,88 @@ export function detectEarlyEntries(tickers: Ticker[]): EarlySignal[] {
   
   // Sort by absolute score (highest confidence first)
   return signals.sort((a, b) => Math.abs(b.score) - Math.abs(a.score));
+}
+
+/**
+ * Enrich top early signals with Adaptive MACD+ confirmation.
+ * - bullCross on LONG  → upgrades medium→high, +2 score
+ * - bearCross on SHORT → upgrades medium→high, -2 score
+ * - histogram confirms direction → +1 / -1 score
+ * - MACD contradicts direction → downgrades high→medium, removes 1 score point
+ * Only checks top N signals to limit API calls.
+ */
+async function enrichWithAdaptiveMACD(
+  signals: EarlySignal[],
+  interval: string = '1h',
+  topN: number = 10
+): Promise<EarlySignal[]> {
+  const candidates = signals.slice(0, topN);
+  const rest       = signals.slice(topN);
+
+  const enriched = await Promise.all(
+    candidates.map(async signal => {
+      try {
+        const macd = await calculateAdaptiveMACD(signal.symbol, { interval, limit: 200 });
+        if (!macd.isValid) return signal;
+
+        const isLong  = signal.type === 'EARLY_LONG';
+        const isShort = signal.type === 'EARLY_SHORT';
+
+        let { score, confidence, triggers } = signal;
+
+        // ── Crossover confirmation ────────────────────────────────────────
+        if (isLong && macd.bullCross) {
+          triggers = [...triggers, `Adaptive MACD bull cross (${macd.bestFast}/${macd.bestSlow})` ];
+          score   += 2;
+          if (confidence === 'medium') confidence = 'high';
+        } else if (isShort && macd.bearCross) {
+          triggers = [...triggers, `Adaptive MACD bear cross (${macd.bestFast}/${macd.bestSlow})` ];
+          score   -= 2;
+          if (confidence === 'medium') confidence = 'high';
+        }
+
+        // ── Histogram momentum confirmation ───────────────────────────────
+        if (isLong && macd.histogram > 0) {
+          triggers = [...triggers, `MACD histogram bullish (${macd.histogram.toFixed(4)})` ];
+          score   += 1;
+        } else if (isShort && macd.histogram < 0) {
+          triggers = [...triggers, `MACD histogram bearish (${macd.histogram.toFixed(4)})` ];
+          score   -= 1;
+        }
+
+        // ── Contradiction — MACD opposes the signal direction ─────────────
+        if (isLong && macd.bearCross) {
+          triggers = [...triggers, `⚠️ MACD bear cross opposes long` ];
+          score   -= 1;
+          if (confidence === 'high') confidence = 'medium';
+        } else if (isShort && macd.bullCross) {
+          triggers = [...triggers, `⚠️ MACD bull cross opposes short` ];
+          score   += 1;
+          if (confidence === 'high') confidence = 'medium';
+        }
+
+        return { ...signal, score, confidence, triggers };
+      } catch {
+        return signal;
+      }
+    })
+  );
+
+  return [...enriched, ...rest].sort((a, b) => Math.abs(b.score) - Math.abs(a.score));
+}
+
+/**
+ * Async version — runs volume/price detection then enriches top signals
+ * with Adaptive MACD+ confirmation. Use this in index.ts.
+ */
+export async function detectEarlyEntries(
+  tickers: Ticker[],
+  options: { macdInterval?: string; macdTopN?: number; skipMACD?: boolean } = {}
+): Promise<EarlySignal[]> {
+  const { macdInterval = '1h', macdTopN = 10, skipMACD = false } = options;
+  const raw = detectEarlyEntriesSync(tickers);
+  if (skipMACD || raw.length === 0) return raw;
+  return enrichWithAdaptiveMACD(raw, macdInterval, macdTopN);
 }
 
 /**

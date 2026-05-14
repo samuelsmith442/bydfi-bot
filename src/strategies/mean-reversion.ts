@@ -1,5 +1,6 @@
 import type { Ticker } from '../models/types.js';
 import { calculateSMABatch } from '../utils/moving-average.js';
+import { calculateAdaptiveMACD } from '../utils/adaptive-macd.js';
 
 export interface MeanReversionSignal {
   symbol: string;
@@ -114,6 +115,63 @@ export async function detectMeanReversion(tickers: Ticker[]): Promise<MeanRevers
   }
   
   console.log(`[MEAN_REVERSION] Generated ${signals.length} signals`);
-  
-  return signals.sort((a, b) => Math.abs(b.deviation) - Math.abs(a.deviation));
+
+  if (signals.length === 0) return signals;
+
+  // ── Adaptive MACD confirmation — enrich top 10 by deviation ─────────────
+  const topN   = Math.min(10, signals.length);
+  const top    = signals.slice(0, topN);
+  const rest   = signals.slice(topN);
+
+  const enriched = await Promise.all(
+    top.map(async signal => {
+      try {
+        const macd = await calculateAdaptiveMACD(signal.symbol, { interval: '1h', limit: 200 });
+        if (!macd.isValid) return signal;
+
+        const isLong  = signal.type === 'MEAN_REVERSION_LONG';
+        const isShort = signal.type === 'MEAN_REVERSION_SHORT';
+        let { score, confidence, reasons } = signal;
+
+        // Crossover aligns with reversion direction → strong confirmation
+        if (isLong && macd.bullCross) {
+          reasons = [...reasons, `Adaptive MACD bull cross (${macd.bestFast}/${macd.bestSlow}) confirms reversal`];
+          score  += 2;
+          if (confidence === 'LOW') confidence = 'MEDIUM';
+          if (confidence === 'MEDIUM') confidence = 'HIGH';
+        } else if (isShort && macd.bearCross) {
+          reasons = [...reasons, `Adaptive MACD bear cross (${macd.bestFast}/${macd.bestSlow}) confirms reversal`];
+          score  -= 2;
+          if (confidence === 'LOW') confidence = 'MEDIUM';
+          if (confidence === 'MEDIUM') confidence = 'HIGH';
+        }
+
+        // Histogram momentum alignment
+        if (isLong && macd.histogram > 0) {
+          reasons = [...reasons, `MACD histogram bullish — momentum turning up`];
+          score  += 1;
+        } else if (isShort && macd.histogram < 0) {
+          reasons = [...reasons, `MACD histogram bearish — momentum turning down`];
+          score  -= 1;
+        }
+
+        // MACD contradicts reversion → downgrade confidence
+        if (isLong && macd.bearCross) {
+          reasons = [...reasons, `⚠️ MACD bear cross — reversion may fail`];
+          score  -= 1;
+          if (confidence === 'HIGH') confidence = 'MEDIUM';
+        } else if (isShort && macd.bullCross) {
+          reasons = [...reasons, `⚠️ MACD bull cross — reversion may fail`];
+          score  += 1;
+          if (confidence === 'HIGH') confidence = 'MEDIUM';
+        }
+
+        return { ...signal, score, confidence, reasons };
+      } catch {
+        return signal;
+      }
+    })
+  );
+
+  return [...enriched, ...rest].sort((a, b) => Math.abs(b.deviation) - Math.abs(a.deviation));
 }
